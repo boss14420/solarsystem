@@ -36,7 +36,7 @@ Planet::Planet(PlanetData const &pd)
     orbitZ(0),
     orbitPHI(pd.orbitPHI),
     phase(0),
-    _texture(loadBMP_custom(pd.texture_file)),
+    _texture(loadDDS(pd.texture_file)),
     _model_matrix(1.0f)
 {
     semiminor_axis = semimajor_axis * std::sqrt(1.0f - pd.eccentricity*pd.eccentricity);
