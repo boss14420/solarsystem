@@ -48,7 +48,7 @@ static unsigned last_time = 0, frames = 0;
 //static SDL_Window *window = NULL;
 //static TTF_Font *font = NULL;
 
-static mat4 ProjectionMatrix = glm::perspective<Float>(45.0f, (float) 800/600, 0.1f, 50.0f);
+static mat4 ProjectionMatrix;
 
 void renderScene(GLFWwindow *window, const SolarSystem &solarsystem) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -230,12 +230,16 @@ int main(int, char **) {
 
     // Open a window and create its OpenGL context
 //    window = glfwOpenWindow( 800, 600, 0,0,0,0, 32,0, GLFW_WINDOW );
-    GLFWwindow *window = glfwCreateWindow(800, 600, "Solar system", nullptr, nullptr); 
+    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    int width = mode->width * 2 / 3;
+    int height = mode->height * 2 / 3;
+    GLFWwindow *window = glfwCreateWindow(width, height, "Solar system", nullptr, nullptr); 
     if (!window) {
         std::fputs( "Failed to open GLFW window.\n", stderr );
         glfwTerminate();
         return -1;
     }
+    ProjectionMatrix = glm::perspective(45.0f, (float) width/height, 0.1f, 50.0f);
 
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, keyboard);
@@ -281,7 +285,7 @@ int main(int, char **) {
 
 
     last_time = glfwGetTime();
-    unsigned dt = 1000 / FPS, delta = 0;
+    unsigned dt = 1000 / 60, delta = 0;
 
     while (!glfwWindowShouldClose(window)) {
         renderScene(window, solarsystem);
