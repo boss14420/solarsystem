@@ -246,6 +246,8 @@ int main(int, char **) {
         return -1;
     }
 
+    std::fprintf(stderr, "Using OpenGL version: %s\n", glGetString(GL_VERSION));
+
 //    glfwEnable (GLFW_STICKY_KEYS);
 
     glClearColor(0.0f, 0.4f, 0.0f, 0.0f);

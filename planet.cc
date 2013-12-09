@@ -8,7 +8,6 @@
 #include <GL/glew.h>
 
 #include "constants.h"
-#include "bmp_loader.h"
 #include "planet.hh"
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
