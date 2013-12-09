@@ -1,7 +1,9 @@
 //#version 120
 
-#ifdef USE_HALFFLOAT
+#ifdef GL_ES
     precision mediump float;
+#endif
+#ifdef USE_HALFFLOAT
     // Input vertex data, different for all executions of this shader.
     attribute lowp vec3 vertex_position_modelspace;
     attribute lowp vec2 vertex_uv;

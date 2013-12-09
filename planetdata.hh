@@ -31,9 +31,8 @@ struct PlanetData {
     char const *texture_file;
 };
 
-extern PlanetData sun_data;
-#define NUM_PLANETS 2
-extern std::vector<PlanetData> planets_data;
-extern PlanetData moon_data;
+extern const PlanetData sun_data;
+extern const std::vector<PlanetData> planets_data;
+extern const PlanetData moon_data;
 
 #endif // __PLANETDATA_HH__
