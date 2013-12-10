@@ -5,8 +5,16 @@
 #include <windows.h>
 #endif
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+//#include <GL/glew.h>
+#include <GLES2/gl2.h>
+//#include <GLFW/glfw3.h>
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_hints.h>
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_video.h>
+#include <SDL2/SDL_error.h>
+#include <SDL2/SDL_log.h>
+#include <SDL2/SDL.h>
 //#include <GL/glfw.h>
 //#include <GL/gl.h>
 //#include <GL/glu.h>
@@ -50,7 +58,7 @@ static unsigned last_time = 0, frames = 0;
 
 static mat4 ProjectionMatrix;
 
-void renderScene(GLFWwindow *window, const SolarSystem &solarsystem) {
+void renderScene(const SolarSystem &solarsystem) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //    glLoadIdentity();
     mat4 ModelMatrix, ViewMatrix, MVP;
@@ -83,10 +91,10 @@ void renderScene(GLFWwindow *window, const SolarSystem &solarsystem) {
 //        drawStats(font, 1000 * frames / SDL_GetTicks());
 
 //    SDL_GL_SwapWindow(window);
-    glfwSwapBuffers(window);
+//    glfwSwapBuffers(window);
 }
 
-void reshape(GLFWwindow *window, int w, int h) {
+void reshape(int w, int h) {
     if (!h)
         h = 1;
 //
@@ -101,26 +109,27 @@ void reshape(GLFWwindow *window, int w, int h) {
 ////    glMatrixMode(GL_MODELVIEW);
 }
 
-void keyboard(GLFWwindow *window, int key, int scancode, int action, int mods) {
+void keyboard(SDL_Window *window, SDL_Scancode scancode) {
+//void keyboard(GLFWwindow *window, int key, int scancode, int action, int mods) {
 //    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 //        glfwSetWindowShouldClose(window, GL_TRUE);
 
 //    Uint32 flags;
 //
-    if (action != GLFW_PRESS && action != GLFW_REPEAT)
-        return;
+//    if (action != GLFW_PRESS && action != GLFW_REPEAT)
+//        return;
 
-    switch (key) {
-        case GLFW_KEY_ESCAPE:
-        case GLFW_KEY_Q:
-            glfwSetWindowShouldClose(window, GL_TRUE);
-            break;
-        case GLFW_KEY_W:
+    switch (scancode) {
+//        case GLFW_KEY_ESCAPE:
+//        case SDL_SCANCODE_Q:
+//            glfwSetWindowShouldClose(window, GL_TRUE);
+//            break;
+        case SDL_SCANCODE_W:
             xpos += sight_x * 0.08f;
             ypos += sight_y * 0.08f;
             zpos += sight_z * 0.08f;
             break;
-        case GLFW_KEY_S:
+        case SDL_SCANCODE_S:
             xpos -= sight_x * 0.08f;
             ypos -= sight_y * 0.08f;
             zpos -= sight_z * 0.08f;
@@ -197,58 +206,70 @@ void keyboard(GLFWwindow *window, int key, int scancode, int action, int mods) {
 }
 
 int main(int, char **) {
-//    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Init(SDL_INIT_EVERYTHING);
 //    TTF_Init();
-//    window = SDL_CreateWindow("Solar system", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-//    SDL_GLContext glcontext = SDL_GL_CreateContext(window);
+    std::atexit(SDL_Quit);
+#ifdef USE_OPENGLES
+    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles2", SDL_HINT_OVERRIDE);
+#endif
+    SDL_Window *window = SDL_CreateWindow("Solar system", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 600, 400, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    if (window == nullptr) {
+        SDL_Log("Couldn't create SDL Window: %s\n", SDL_GetError());
+        return 1;
+    }
+    SDL_GLContext glcontext = SDL_GL_CreateContext(window);
+    if (glcontext == nullptr) {
+        SDL_Log("Coudn't create SDL GL contex: %s\n", SDL_GetError());
+        return 1;
+    }
 //    SDL_GL_SetSwapInterval(1); // Enable VSYNC
-//    reshape(WIDTH, HEIGHT); // SDL does not send resize event on startup
+    reshape(600, 400); // SDL does not send resize event on startup
 
 //    font = TTF_OpenFont("Vera.ttf", 16);
 
 
-    // Initialise GLFW
-    if (!glfwInit()) {
-        std::fputs("Failed to initialize GLFW\n", stderr);
-        return -1;
-    }
-
-    glfwDefaultWindowHints();
-    glfwWindowHint(GLFW_SAMPLES, 4);
-#ifdef USE_OPENGLES
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-#else
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-#endif
+//    // Initialise GLFW
+//    if (!glfwInit()) {
+//        std::fputs("Failed to initialize GLFW\n", stderr);
+//        return -1;
+//    }
+//
+//    glfwDefaultWindowHints();
+//    glfwWindowHint(GLFW_SAMPLES, 4);
+//#ifdef USE_OPENGLES
+//    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+//#else
+//    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+//#endif
 //    glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
 //    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
 //    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 0);
 
     // Open a window and create its OpenGL context
 //    window = glfwOpenWindow( 800, 600, 0,0,0,0, 32,0, GLFW_WINDOW );
-    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    int width = mode->width * 2 / 3;
-    int height = mode->height * 2 / 3;
-    GLFWwindow *window = glfwCreateWindow(width, height, "Solar system", nullptr, nullptr); 
-    if (!window) {
-        std::fputs( "Failed to open GLFW window.\n", stderr );
-        glfwTerminate();
-        return -1;
-    }
-    ProjectionMatrix = glm::perspective(45.0f, (float) width/height, 0.1f, 50.0f);
+//    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+//    int width = mode->width * 2 / 3;
+//    int height = mode->height * 2 / 3;
+//    GLFWwindow *window = glfwCreateWindow(width, height, "Solar system", nullptr, nullptr); 
+//    if (!window) {
+//        std::fputs( "Failed to open GLFW window.\n", stderr );
+//        glfwTerminate();
+//        return -1;
+//    }
+//    ProjectionMatrix = glm::perspective(45.0f, (float) width/height, 0.1f, 50.0f);
+//
+//    glfwMakeContextCurrent(window);
+//    glfwSetKeyCallback(window, keyboard);
+//    glfwSetFramebufferSizeCallback(window, reshape);
 
-    glfwMakeContextCurrent(window);
-    glfwSetKeyCallback(window, keyboard);
-    glfwSetFramebufferSizeCallback(window, reshape);
-
-    if (glewInit() != GLEW_OK) {
-        std::fputs("Failed to initialize GLEW\n", stderr);
-        return -1;
-    }
+//    if (glewInit() != GLEW_OK) {
+//        std::fputs("Failed to initialize GLEW\n", stderr);
+//        return -1;
+//    }
 
     std::fprintf(stderr, "Using OpenGL version: %s\n", glGetString(GL_VERSION));
 
@@ -268,7 +289,8 @@ int main(int, char **) {
 //    glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_d);
 //    glEnable(GL_LIGHT0);
 
-    glClearDepth(1.0);
+//    glClearDepth(1.0);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
     SolarSystem solarsystem;
 //    solarsystem.add_planet(1.0f, 1.0f, 0.016f, SIDERIAL_YEAR, 1.0f, 0.0f, EARTH_AXIS_INCLINATION, 0.0f, 0.0f, "textures/earth.bmp", -M_PI);
@@ -284,11 +306,30 @@ int main(int, char **) {
     solarsystem.add_planet(planets_data[1]);
 
 
-    last_time = glfwGetTime();
+    last_time = SDL_GetTicks();
     unsigned dt = 1000 / 60, delta = 0;
 
-    while (!glfwWindowShouldClose(window)) {
-        renderScene(window, solarsystem);
+    bool running = true;
+    while (running) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    running = false;
+                    break;
+                case SDL_WINDOWEVENT:
+                    if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+                        reshape(event.window.data1, event.window.data2);
+                    else if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+                        running = false;
+                    break;
+                case SDL_KEYDOWN:
+                    keyboard(window, event.key.keysym.scancode);
+                    break;
+            }
+        }
+
+        renderScene(solarsystem);
     
 //        double time = glfwGetTime();
 //        delta += time - last_time;
@@ -300,12 +341,16 @@ int main(int, char **) {
 //        solarsystem.move(30);
         frames++;
 //        last_time = time;
-        glfwPollEvents();
+//        glfwPollEvents();
+        SDL_GL_SwapWindow(window);
     } 
 
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+//    glfwDestroyWindow(window);
+//    glfwTerminate();
+    
+    SDL_GL_DeleteContext(glcontext);
+    SDL_DestroyWindow(window);
 
     return 0;
 }

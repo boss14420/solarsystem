@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include <GLES2/gl2.h>
 
 //#include <GL/glfw.h>
 #include <GLFW/glfw3.h>

@@ -19,14 +19,16 @@
 #ifndef __CONFIG_HH__
 #define __CONFIG_HH__
 
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include <GLES2/gl2.h>
 #include <glm/glm.hpp>
 #include <cstdint>
 #include <climits>
 
 #ifdef USE_OPENGLES
 #include <glm/gtc/half_float.hpp>
-    #define USE_HALFFLOAT
+//    #define USE_HALFFLOAT
+    #define USE_FLOAT
 
     #define SPHERE_FRAG_SHADER "shaders/sphere.gl.frag"
     #define SPHERE_VERT_SHADER "shaders/sphere.gl.vert"
@@ -41,7 +43,7 @@
     typedef GLfloat Float;
     typedef glm::half FloatData;
     #define FLOAT_TYPE GL_FLOAT
-    #define FLOAT_DATA_TYPE GL_HALF_FLOAT
+    #define FLOAT_DATA_TYPE GL_LOW_FLOAT
 #else
     #define FLOAT_DATA_TYPE GL_FLOAT
     typedef GLfloat Float;

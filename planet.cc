@@ -5,7 +5,8 @@
 #define _USE_MATH_DEFINES
 #endif
 #include <cmath>
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include <GLES2/gl2.h>
 
 #include "constants.h"
 #include "planet.hh"
@@ -278,6 +279,7 @@ mat4 Planet::render_orbit(mat4 matrix) const
 //}
 
 // Taken from google, claimed to be from Red Book
+#if 0
 void drawTorus(double r, int numc, int numt) {
     int i, j, k;
     double s, t, x, y, z, twopi;
@@ -299,3 +301,4 @@ void drawTorus(double r, int numc, int numt) {
     glEnd();
     }
 }
+#endif

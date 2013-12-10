@@ -4,12 +4,13 @@ project (solarsystem)
 #find_package(OpenGL REQUIRED)
 find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLFW REQUIRED gles)
-pkg_search_module(GLFW REQUIRED glfw3)
-pkg_search_module(GLEW REQUIRED glew)
+#pkg_search_module(GLFW REQUIRED glfw3)
+#pkg_search_module(GLEW REQUIRED glew)
+pkg_search_module(SDL2 REQUIRED sdl2)
 
 if(USE_OPENGLES)
     pkg_search_module(GLESv2 REQUIRED glesv2)
-    set(GL_LIBRARY ${GLESv2LIBRARIES})
+    set(GL_LIBRARY ${GLESv2_LIBRARIES})
     add_definitions(-DUSE_OPENGLES)
 else(USE_OPENGLES)
     find_package(OpenGL REQUIRED)
@@ -18,9 +19,14 @@ endif(USE_OPENGLES)
 
 include_directories(
     .
-    ${GLFW_INCLUDE_DIRS}
-    ${GLEW_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIRS}
+    ${GLESv2_INCLUDE_DIRS}
 )
+
+message(STATUS ${SDL2_INCLUDE_DIRS})
+message(STATUS ${GLESv2_INCLUDE_DIRS})
+message(STATUS ${SDL2_LIBRARIES})
+message(STATUS ${GL_LIBRARY})
 
 
 
@@ -51,6 +57,6 @@ add_executable(solarsystem
 
 target_link_libraries(solarsystem
     ${GL_LIBRARY}
-    ${GLEW_LIBRARIES}
+    ${SDL2_LIBRARIES}
     ${GLFW_LIBRARIES}
 )
