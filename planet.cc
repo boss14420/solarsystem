@@ -41,7 +41,7 @@ Planet::Planet(PlanetData const &pd)
 {
     semiminor_axis = semimajor_axis * std::sqrt(1.0f - pd.eccentricity*pd.eccentricity);
 //    texture = loadBMPTexture(texture_file);
-//    texture = loadBMP_custom(texture_file);
+//    texture = loadDDS(texture_file);
 
     _model_matrix *= glm::rotate(ECLIPTIC_INCLINATION, 0.0f, 0.0f, 1.0f);
 
@@ -76,12 +76,12 @@ Planet::Planet(Float radius_,
     orbitZ(0.0f),
     orbitPHI(phi),
     phase(0.0f),
-    _texture(loadBMP_custom(texture_file)),
+    _texture(loadDDS(texture_file)),
     _model_matrix(1.0f)
 {
     semiminor_axis = semimajor_axis * std::sqrt(1.0f - eccentricity*eccentricity);
 //    texture = loadBMPTexture(texture_file);
-//    texture = loadBMP_custom(texture_file);
+//    texture = loadDDS(texture_file);
 
     _model_matrix *= glm::rotate(ECLIPTIC_INCLINATION, 0.0f, 0.0f, 1.0f);
 

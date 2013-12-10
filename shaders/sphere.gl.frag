@@ -21,7 +21,7 @@ void main(){
 	// Light emission properties
 	// You probably want to put them as uniforms
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 50.0f;
+	float LightPower = 50.0;
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = texture2D( texture, UV ).rgb;
@@ -40,7 +40,7 @@ void main(){
 	//  - light is at the vertical of the triangle -> 1
 	//  - light is perpendicular to the triangle -> 0
 	//  - light is behind the triangle -> 0
-	float cosTheta = clamp( dot( n,l ), 0,1 );
+	float cosTheta = clamp( dot( n,l ), 0.0, 1.0 );
 	
 	// Eye vector (towards the camera)
 	vec3 E = normalize(EyeDirection_cameraspace);
@@ -50,7 +50,7 @@ void main(){
 	// clamped to 0
 	//  - Looking into the reflection -> 1
 	//  - Looking elsewhere -> < 1
-	float cosAlpha = clamp( dot( E,R ), 0,1 );
+	float cosAlpha = clamp( dot( E,R ), 0.0, 1.0 );
 	
         /*
 	gl_FragColor.rgb = 

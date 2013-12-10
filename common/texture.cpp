@@ -4,11 +4,12 @@
 
 //#include <GL/glew.h>
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 
 //#include <GL/glfw.h>
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 
-
+#if 0
 GLuint loadBMP_custom(const char * imagepath){
 
 	printf("Reading image %s\n", imagepath);
@@ -88,7 +89,7 @@ GLuint loadBMP_custom(const char * imagepath){
 	// Return the ID of the texture we just created
 	return textureID;
 }
-
+#endif
 #if 0
 GLuint loadTGA_glfw(const char * imagepath){
 
@@ -162,16 +163,35 @@ GLuint loadDDS(const char * imagepath){
 
 	unsigned int components  = (fourCC == FOURCC_DXT1) ? 3 : 4; 
 	unsigned int format;
+	unsigned int blockSize;
 	switch(fourCC) 
 	{ 
 	case FOURCC_DXT1: 
+#ifdef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
 		format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT; 
+                blockSize = 8;
+#else
+                fprintf(stderr, "Not support GL_COMPRESSED_RGBA_S3TC_DXT1_EXT\n");
+                return 0;
+#endif
 		break; 
 	case FOURCC_DXT3: 
+#ifdef GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
 		format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT; 
+                blockSize = 16;
+#else
+                fprintf(stderr, "Not support GL_COMPRESSED_RGBA_S3TC_DXT3_EXT\n");
+                return 0;
+#endif
 		break; 
 	case FOURCC_DXT5: 
+#ifdef GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
 		format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT; 
+                blockSize = 16;
+#else
+                fprintf(stderr, "Not support GL_COMPRESSED_RGBA_S3TC_DXT5_EXT\n");
+                return 0;
+#endif
 		break; 
 	default: 
 		free(buffer); 
@@ -186,7 +206,6 @@ GLuint loadDDS(const char * imagepath){
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1);	
 	
-	unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16; 
 	unsigned int offset = 0;
 
 	/* load the mipmaps */ 
@@ -204,7 +223,7 @@ GLuint loadDDS(const char * imagepath){
 		if(width < 1) width = 1;
 		if(height < 1) height = 1;
 
-	} 
+	}
 
 	free(buffer); 
 

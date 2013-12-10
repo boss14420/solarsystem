@@ -23,6 +23,10 @@ include_directories(
     ${GLESv2_INCLUDE_DIRS}
 )
 
+link_directories(
+    ${SDL2_LIBRARY_DIRS}
+)
+
 message(STATUS ${SDL2_INCLUDE_DIRS})
 message(STATUS ${GLESv2_INCLUDE_DIRS})
 message(STATUS ${SDL2_LIBRARIES})
