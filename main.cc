@@ -8,7 +8,6 @@
 //#include <GL/glew.h>
 #include <GLES2/gl2.h>
 //#include <GLFW/glfw3.h>
-#include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_hints.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_video.h>
