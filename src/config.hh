@@ -27,8 +27,8 @@
 
 #ifdef USE_OPENGLES
 #include <glm/gtc/half_float.hpp>
-//    #define USE_HALFFLOAT
-    #define USE_FLOAT
+    #define USE_HALFFLOAT
+//    #define USE_FLOAT
 #else
     #define USE_FLOAT
 #endif
