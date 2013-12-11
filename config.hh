@@ -30,13 +30,17 @@
 //    #define USE_HALFFLOAT
     #define USE_FLOAT
 
-    #define SPHERE_FRAG_SHADER "shaders/sphere.gl.frag"
-    #define SPHERE_VERT_SHADER "shaders/sphere.gl.vert"
+    #define PLANET_FRAG_SHADER "shaders/sphere.gl.frag"
+    #define PLANET_VERT_SHADER "shaders/sphere.gl.vert"
+    #define STAR_FRAG_SHADER "shaders/star.gl.frag"
+    #define STAR_VERT_SHADER "shaders/sphere.gl.vert"
 #else
     #define USE_FLOAT
 
-    #define SPHERE_FRAG_SHADER "shaders/sphere.gl.frag"
-    #define SPHERE_VERT_SHADER "shaders/sphere.gl.vert"
+    #define PLANET_FRAG_SHADER "shaders/sphere.gl.frag"
+    #define PLANET_VERT_SHADER "shaders/sphere.gl.vert"
+    #define STAR_FRAG_SHADER "shaders/star.gl.frag"
+    #define STAR_VERT_SHADER "shaders/sphere.gl.vert"
 #endif
 
 #ifdef USE_HALFFLOAT

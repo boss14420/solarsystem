@@ -21,11 +21,12 @@
 
 #include "config.hh"
 #include "planet.hh"
+#include "star.hh"
 #include <vector>
 
 class SolarSystem {
-    Planet _sun;
-//    std::vector<Planet> _planet_list;
+    Star _sun;
+    std::vector<Planet> _planet_list;
 
     mat4 _model_matrix;
 //    GLuint _shader_program;
@@ -36,7 +37,7 @@ public:
 
     template <typename... Args>
     void set_sun(Args&&... args) {
-        _sun = std::move(Planet(std::forward<Args>(args)...));
+        _sun = std::move(Star(std::forward<Args>(args)...));
     }
 
     mat4 render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix) const;
@@ -45,8 +46,9 @@ public:
     template <typename... Args>
     Planet& add_planet (Args&&... args) 
     {
-        _sun.moons.emplace_back(std::forward<Args>(args)...);
-        return _sun.moons.back();
+//        _sun.moons.emplace_back(std::forward<Args>(args)...);
+        _planet_list.emplace_back(std::forward<Args>(args)...);
+        return _planet_list.back();
     }
 };
 

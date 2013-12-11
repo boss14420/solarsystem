@@ -47,6 +47,8 @@ add_executable(solarsystem
     model.cc
     planet.hh
     planet.cc
+    star.hh
+    star.cc
     solarsystem.hh
     solarsystem.cc
     common/shader.cpp
