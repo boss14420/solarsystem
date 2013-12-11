@@ -113,7 +113,7 @@ void keyboard(SDL_Window *window, SDL_Scancode scancode) {
 //    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 //        glfwSetWindowShouldClose(window, GL_TRUE);
 
-//    Uint32 flags;
+    Uint32 flags;
 //
 //    if (action != GLFW_PRESS && action != GLFW_REPEAT)
 //        return;
@@ -133,72 +133,72 @@ void keyboard(SDL_Window *window, SDL_Scancode scancode) {
             ypos -= sight_y * 0.08f;
             zpos -= sight_z * 0.08f;
             break;
-//        case SDL_SCANCODE_A:
-//            xpos -= -sight_z * 0.08f;
-//            zpos -= sight_x * 0.08f;
-//            break;
-//        case SDL_SCANCODE_D:
-//            xpos += -sight_z * 0.08f;
-//            zpos += sight_x * 0.08f;
-//            break;
-//        case SDL_SCANCODE_Z:
-//            ypos += -sight_z * 0.08f;
-//            zpos += sight_y * 0.08f;
-//            break;
-//        case SDL_SCANCODE_X:
-//            ypos -= -sight_z * 0.08f;
-//            zpos -= sight_y * 0.08f;
-//            break;
-//        case SDL_SCANCODE_R:
-//            xpos = 0.0f, ypos = 1.0f, zpos = 2.5f;
-//            sight_x = 0.0f, sight_y = -0.43f, sight_z = -0.9f;
-//            up_x = 0.0f, up_y = 1.0f;
-//            cam_xz_angle = 0.0f, cam_y_angle = -0.45f;
-//            cam_z_angle = M_PI_2;
-//            break;
-//        case SDL_SCANCODE_F:
-//            flags = SDL_GetWindowFlags(window);
-//            SDL_SetWindowFullscreen(window, flags ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
-//            break;
-//        case SDL_SCANCODE_O:
-//            orbits = !orbits;
-//            break;
-//        case SDL_SCANCODE_LEFT:
-//            cam_xz_angle -= 0.02f;
-//            sight_x = cosf(cam_y_angle) * sinf(cam_xz_angle);
-//            sight_z = -cosf(cam_y_angle) * cosf(cam_xz_angle);
-//            break;
-//        case SDL_SCANCODE_RIGHT:
-//            cam_xz_angle += 0.02f;
-//            sight_x = cosf(cam_y_angle) * sinf(cam_xz_angle);
-//            sight_z = -cosf(cam_y_angle) * cosf(cam_xz_angle);
-//            break;
-//        case SDL_SCANCODE_UP:
-//            if (cam_y_angle > M_PI / 3) // Do not look up to avoid gimbal locks and other problems
-//                break;
-//            cam_y_angle += 0.02;
-//            sight_x = cosf(cam_y_angle) * sinf(cam_xz_angle);
-//            sight_y = sinf(cam_y_angle);
-//            sight_z = -cosf(cam_y_angle) * cosf(cam_xz_angle);
-//            break;
-//        case SDL_SCANCODE_DOWN:
-//            if (cam_y_angle < -M_PI / 3) // And do not look down
-//                break;
-//            cam_y_angle -= 0.02f;
-//            sight_x = cosf(cam_y_angle) * sinf(cam_xz_angle);
-//            sight_y = sinf(cam_y_angle);
-//            sight_z = -cosf(cam_y_angle) * cosf(cam_xz_angle);
-//            break;
-//        case SDL_SCANCODE_PAGEUP:
-//            cam_z_angle += 0.02f;
-//            up_x = cosf(cam_z_angle);
-//            up_y = sinf(cam_z_angle);
-//            break;
-//        case SDL_SCANCODE_PAGEDOWN:
-//            cam_z_angle -= 0.02f;
-//            up_x = cosf(cam_z_angle);
-//            up_y = sinf(cam_z_angle);
-//            break;
+        case SDL_SCANCODE_A:
+            xpos -= -sight_z * 0.08f;
+            zpos -= sight_x * 0.08f;
+            break;
+        case SDL_SCANCODE_D:
+            xpos += -sight_z * 0.08f;
+            zpos += sight_x * 0.08f;
+            break;
+        case SDL_SCANCODE_Z:
+            ypos += -sight_z * 0.08f;
+            zpos += sight_y * 0.08f;
+            break;
+        case SDL_SCANCODE_X:
+            ypos -= -sight_z * 0.08f;
+            zpos -= sight_y * 0.08f;
+            break;
+        case SDL_SCANCODE_R:
+            xpos = 0.0f, ypos = 1.0f, zpos = 2.5f;
+            sight_x = 0.0f, sight_y = -0.43f, sight_z = -0.9f;
+            up_x = 0.0f, up_y = 1.0f;
+            cam_xz_angle = 0.0f, cam_y_angle = -0.45f;
+            cam_z_angle = M_PI_2;
+            break;
+        case SDL_SCANCODE_F:
+            flags = SDL_GetWindowFlags(window);
+            SDL_SetWindowFullscreen(window, flags ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
+            break;
+        case SDL_SCANCODE_O:
+            orbits = !orbits;
+            break;
+        case SDL_SCANCODE_LEFT:
+            cam_xz_angle -= 0.02f;
+            sight_x = cosf(cam_y_angle) * sinf(cam_xz_angle);
+            sight_z = -cosf(cam_y_angle) * cosf(cam_xz_angle);
+            break;
+        case SDL_SCANCODE_RIGHT:
+            cam_xz_angle += 0.02f;
+            sight_x = cosf(cam_y_angle) * sinf(cam_xz_angle);
+            sight_z = -cosf(cam_y_angle) * cosf(cam_xz_angle);
+            break;
+        case SDL_SCANCODE_UP:
+            if (cam_y_angle > M_PI / 3) // Do not look up to avoid gimbal locks and other problems
+                break;
+            cam_y_angle += 0.02;
+            sight_x = cosf(cam_y_angle) * sinf(cam_xz_angle);
+            sight_y = sinf(cam_y_angle);
+            sight_z = -cosf(cam_y_angle) * cosf(cam_xz_angle);
+            break;
+        case SDL_SCANCODE_DOWN:
+            if (cam_y_angle < -M_PI / 3) // And do not look down
+                break;
+            cam_y_angle -= 0.02f;
+            sight_x = cosf(cam_y_angle) * sinf(cam_xz_angle);
+            sight_y = sinf(cam_y_angle);
+            sight_z = -cosf(cam_y_angle) * cosf(cam_xz_angle);
+            break;
+        case SDL_SCANCODE_PAGEUP:
+            cam_z_angle += 0.02f;
+            up_x = cosf(cam_z_angle);
+            up_y = sinf(cam_z_angle);
+            break;
+        case SDL_SCANCODE_PAGEDOWN:
+            cam_z_angle -= 0.02f;
+            up_x = cosf(cam_z_angle);
+            up_y = sinf(cam_z_angle);
+            break;
         default:
             break;
     }
