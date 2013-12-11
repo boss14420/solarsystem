@@ -89,10 +89,13 @@ mat4 SolarSystem::render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix, 
 //    for (auto const &planet : _planet_list)
 //        planet.render(mvp_matrix);
 
-//    if (_display_orbit) {
-//        for (auto const &planet : _planet_list)
-//            planet.render_orbit(mvp_matrix);
-//    }
+    _orbit_shader_program.use();
+    Planet::_orbit_model.use_program(_orbit_shader_program);
+    Planet::_orbit_model.prepare_render(model_matrix, view_matrix, mvp_matrix);
+    if (orbit) {
+        for (auto const &planet : _planet_list)
+            planet.render_orbit(mvp_matrix);
+    }
 
     return mvp_matrix;
 }

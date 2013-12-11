@@ -41,7 +41,7 @@ public:
         _sun = std::move(Star(std::forward<Args>(args)...));
     }
 
-    mat4 render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix) const;
+    mat4 render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix, bool orbit = false) const;
     void move (int elapsed);
 
     template <typename... Args>

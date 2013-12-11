@@ -75,7 +75,7 @@ void renderScene(const SolarSystem &solarsystem) {
 //    ProjectionMatrix = glm::perspective(45.0f, (float) 800/600, 0.1f, 50.0f);
     
     MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-    solarsystem.render(ModelMatrix, ViewMatrix, MVP);
+    solarsystem.render(ModelMatrix, ViewMatrix, MVP, orbits);
 
 //    Float sun_p[] = {0.0f, 0.0f, 0.0f, 1.0f};
 ////    glLightfv(GL_LIGHT0, GL_POSITION, sun_p);

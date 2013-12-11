@@ -163,39 +163,16 @@ mat4 Planet::render(mat4 model_matrix, mat4 mvp_matrix) const {
 mat4 Planet::render_orbit(mat4 matrix) const
 {
     matrix *= _orbit_model_matrix;
-    matrix *= glm::rotate(90.0f, 1.0f, 0.0f, 0.f);
-    matrix *= glm::scale(1.0f, semiminor_axis / semimajor_axis, 1.0f);
+//    matrix *= glm::rotate(90.0f, 1.0f, 0.0f, 0.f);
+    matrix *= glm::scale(semimajor_axis, 1.0f , semiminor_axis);
 
     // draw
+    _orbit_model.render(glm::mat4(), matrix, 0);
+
+    // render moons's orbit
+    matrix *= glm::translate(orbitX, 0.0f, orbitZ);
+    for (auto const &moon : moons)
+        moon.render_orbit(matrix);
 
     return matrix;
 }
-
-//void Planet::addMoon(Planet &&moon) {
-//    moons.push_back(std::move(moon));
-//}
-
-// Taken from google, claimed to be from Red Book
-#if 0
-void drawTorus(double r, int numc, int numt) {
-    int i, j, k;
-    double s, t, x, y, z, twopi;
-
-    twopi = 2 * (double) M_PI;
-    for (i = 0; i < numc; i++) {
-        glBegin(GL_QUAD_STRIP);
-        for (j = 0; j <= numt; j++) {
-            for (k = 1; k >= 0; k--) {
-                s = (i + k) % numc + 0.5;
-                t = j % numt;
-
-                x = (r + .001*cos(s*twopi/numc))*cos(t*twopi/numt);
-                y = (r + .001*cos(s*twopi/numc))*sin(t*twopi/numt);
-                z = .001 * sin(s * twopi / numc);
-                glVertex3f(x, y, z);
-            }
-        }
-    glEnd();
-    }
-}
-#endif
