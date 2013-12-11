@@ -8,7 +8,7 @@
 //#include <GL/glew.h>
 #include <GLES2/gl2.h>
 
-#include "constants.h"
+#include "../constants.h"
 #include "planet.hh"
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -16,12 +16,13 @@
 #include <glm/ext.hpp>
 
 
-#include "common/texture.hpp"
+#include "../common/texture.hpp"
 
 
 void drawTorus(double, int, int);
 
-Model Planet::_sphere_model;
+Mesh Planet::_sphere_model;
+Circle Planet::_orbit_model;
 
 Planet::Planet(PlanetData const &pd)
   : radius(pd.radius),

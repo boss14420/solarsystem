@@ -36,8 +36,8 @@
 //#include "rendering.h"
 //#include "bmp_loader.h"
 //#include "planet.h"
-#include "solarsystem.hh"
-#include "planetdata.hh"
+#include "objects/solarsystem.hh"
+#include "objects/planetdata.hh"
 
 //#include "common/shader.hpp"
 ////#include "common/controls.hpp"
@@ -204,7 +204,7 @@ void keyboard(SDL_Window *window, SDL_Scancode scancode) {
     }
 }
 
-int main(int, char **) {
+int main(int argc, char **argv) {
     SDL_Init(SDL_INIT_EVERYTHING);
 //    TTF_Init();
     std::atexit(SDL_Quit);
@@ -306,10 +306,11 @@ int main(int, char **) {
 
 
     last_time = SDL_GetTicks();
-    unsigned dt = 1000 / 60, delta = 0;
+    unsigned dt = 10, delta = 0;
     unsigned last_fps_print = last_time;
 
     bool running = true;
+    bool print_fps = (argc >= 2 && argv[1][0] == 'f');
     while (running) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -342,8 +343,9 @@ int main(int, char **) {
 //        solarsystem.move(30);
         frames++;
         if (time - last_fps_print >= 1000) {
-            std::fprintf(stderr, "FPS: %f frame/s\n", (float)frames / (time - last_fps_print) * 1000);
-            last_fps_print = time;
+            if (print_fps)
+                std::fprintf(stderr, "FPS: %f frame/s\n", (float)frames);
+            last_fps_print += 1000;
             frames = 0;
         }
 //        glfwPollEvents();

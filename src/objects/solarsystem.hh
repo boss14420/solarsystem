@@ -19,9 +19,9 @@
 #ifndef __SOLARSYSTEM_HH__
 #define __SOLARSYSTEM_HH__
 
-#include "config.hh"
+#include "../config.hh"
 #include "planet.hh"
-#include "star.hh"
+//#include "star.hh"
 #include <vector>
 
 class SolarSystem {
@@ -30,7 +30,8 @@ class SolarSystem {
 
     mat4 _model_matrix;
 //    GLuint _shader_program;
-    bool _display_orbit;
+//    bool _display_orbit;
+    ShaderProgram _star_shader_program, _planet_shader_program, _orbit_shader_program;
 
 public:
     SolarSystem ();

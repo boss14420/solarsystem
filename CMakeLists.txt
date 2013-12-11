@@ -27,6 +27,35 @@ link_directories(
     ${SDL2_LIBRARY_DIRS}
 )
 
+set(HEADER_FILES 
+    "src/config.hh"
+    "src/constants.h"
+    "src/common/texture.hpp"
+    "src/common/vboindexer.hpp"
+    "src/common/objloader.hpp"
+    "src/graphics/shader.hh"
+    "src/graphics/model.hh"
+    "src/graphics/mesh.hh"
+    "src/graphics/circle.hh"
+    "src/objects/planet.hh"
+    "src/objects/planetdata.hh"
+    "src/objects/solarsystem.hh"
+    )
+
+set(SRC_FILES
+    "src/main.cc"
+    "src/common/texture.cpp"
+    "src/common/vboindexer.cpp"
+    "src/common/objloader.cpp"
+    "src/graphics/shader.cc"
+    "src/graphics/model.cc"
+    "src/graphics/mesh.cc"
+    "src/graphics/circle.cc"
+    "src/objects/planet.cc"
+    "src/objects/planetdata.cc"
+    "src/objects/solarsystem.cc"
+    )
+
 message(STATUS ${SDL2_INCLUDE_DIRS})
 message(STATUS ${GLESv2_INCLUDE_DIRS})
 message(STATUS ${SDL2_LIBRARIES})
@@ -39,26 +68,8 @@ SET(CMAKE_CXX_FLAGS "-O3 -march=native -Wall -std=c++11 -pipe")
 SET(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS})
 
 add_executable(solarsystem
-    main.cc
-    config.hh
-    planetdata.hh
-    planetdata.cc
-    model.hh
-    model.cc
-    planet.hh
-    planet.cc
-    star.hh
-    star.cc
-    solarsystem.hh
-    solarsystem.cc
-    common/shader.cpp
-    common/shader.hpp
-    common/texture.cpp
-    common/texture.hpp
-    common/objloader.cpp
-    common/objloader.hpp
-    common/vboindexer.cpp
-    common/vboindexer.hpp
+    ${SRC_FILES}
+    ${HEADER_FILES}
 )
 
 target_link_libraries(solarsystem

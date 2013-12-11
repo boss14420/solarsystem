@@ -19,7 +19,7 @@
 #ifndef __PLANETDATA_HH__
 #define __PLANETDATA_HH__
 
-#include "config.hh"
+#include "../config.hh"
 #include <vector>
 
 struct PlanetData {

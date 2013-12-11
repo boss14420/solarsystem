@@ -7,8 +7,9 @@
 #include <windows.h>
 #endif
 
-#include "config.hh"
-#include "model.hh"
+#include "../config.hh"
+#include "../graphics/mesh.hh"
+#include "../graphics/circle.hh"
 #include "planetdata.hh"
 
 #include <vector>
@@ -18,6 +19,10 @@
 
 class SolarSystem;
 
+class Planet;
+typedef Planet Star;
+typedef Planet Moon;
+
 class Planet {
 private:
     Float radius, semimajor_axis, semiminor_axis;
@@ -25,14 +30,14 @@ private:
     Float orbit_inclination, axis_inclination;
     Float asc_node, arg_periapsis;
     Float orbitX, orbitZ, orbitPHI, phase; // phi in radians, phase in degrees
-    std::vector<Planet> moons;
+    std::vector<Moon> moons;
 
     GLuint _texture;
     mat4 _orbit_model_matrix;
     mat4 _sphere_model_matrix;
 
-protected:
-    static Model _sphere_model;
+    static Mesh _sphere_model;
+    static Circle _orbit_model;
 
 public:
     Planet () = default;
@@ -54,7 +59,7 @@ public:
 //    Planet& add_moon (Planet &&moon); // Use rvalue reference to always steal caller's object - avoids copying OpenGL textures
 
     template <typename... Args>
-    Planet& add_moon (Args&&... args) {
+    Moon& add_moon (Args&&... args) {
         moons.emplace_back(std::forward<Args>(args)...);
         return moons.back();
     }

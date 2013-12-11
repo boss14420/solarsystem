@@ -29,18 +29,8 @@
 #include <glm/gtc/half_float.hpp>
 //    #define USE_HALFFLOAT
     #define USE_FLOAT
-
-    #define PLANET_FRAG_SHADER "shaders/sphere.gl.frag"
-    #define PLANET_VERT_SHADER "shaders/sphere.gl.vert"
-    #define STAR_FRAG_SHADER "shaders/star.gl.frag"
-    #define STAR_VERT_SHADER "shaders/sphere.gl.vert"
 #else
     #define USE_FLOAT
-
-    #define PLANET_FRAG_SHADER "shaders/sphere.gl.frag"
-    #define PLANET_VERT_SHADER "shaders/sphere.gl.vert"
-    #define STAR_FRAG_SHADER "shaders/star.gl.frag"
-    #define STAR_VERT_SHADER "shaders/sphere.gl.vert"
 #endif
 
 #ifdef USE_HALFFLOAT
@@ -66,7 +56,5 @@ typedef glm::detail::tvec4<Float> vec4;
 
 typedef std::uint16_t index_type;
 #define INDEX_TYPE GL_UNSIGNED_SHORT
-
-#define SPHERE_MODEL "objects/earth.obj"
 
 #endif // __CONFIG_HH__

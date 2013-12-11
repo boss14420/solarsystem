@@ -18,7 +18,7 @@
 
 
 #include "planetdata.hh"
-#include "constants.h"
+#include "../constants.h"
 
 const PlanetData sun_data = {
       EARTH_RADIUS * 10,   0.0f,  0.0f,   1.0f,          25.0f, 0.0f,  0.0f,                   0.0f,   0.0f,  -M_PI, "textures/sun.dds"};
