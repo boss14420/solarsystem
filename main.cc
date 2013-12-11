@@ -307,6 +307,7 @@ int main(int, char **) {
 
     last_time = SDL_GetTicks();
     unsigned dt = 1000 / 60, delta = 0;
+    unsigned last_fps_print = last_time;
 
     bool running = true;
     while (running) {
@@ -330,16 +331,21 @@ int main(int, char **) {
 
         renderScene(solarsystem);
     
-//        double time = glfwGetTime();
-//        delta += time - last_time;
-//        while (delta >= dt) { // Maintain constant physics step and free framerate
-//            solarsystem.move(dt);
-            solarsystem.move(50);
-//            delta -= dt;
-//        }
+        unsigned time = SDL_GetTicks();
+        delta += time - last_time;
+        while (delta >= dt) { // Maintain constant physics step and free framerate
+            solarsystem.move(dt);
+//            solarsystem.move(50);
+            delta -= dt;
+        }
+        last_time = time;
 //        solarsystem.move(30);
         frames++;
-//        last_time = time;
+        if (time - last_fps_print >= 1000) {
+            std::fprintf(stderr, "FPS: %f frame/s\n", (float)frames / (time - last_fps_print) * 1000);
+            last_fps_print = time;
+            frames = 0;
+        }
 //        glfwPollEvents();
         SDL_GL_SwapWindow(window);
     } 
