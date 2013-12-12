@@ -51,9 +51,14 @@ bool Mesh::load_model(char const *model_file)
 
     attributes.resize(indexed_vertices.size());
     for(std::size_t i = 0; i != indexed_vertices.size(); ++i) {
-        attributes[i] = { indexed_vertices[i][0],indexed_vertices[i][1], indexed_vertices[i][2],
-                          indexed_uvs[i][0], indexed_uvs[i][1],
-                          indexed_normals[i][0],indexed_normals[i][1],indexed_normals[i][2] };
+        attributes[i].data[0] = indexed_vertices[i][0];
+        attributes[i].data[1] = indexed_vertices[i][1];
+        attributes[i].data[2] = indexed_vertices[i][2];
+        attributes[i].data[3] = indexed_uvs[i][0]; 
+        attributes[i].data[4] = indexed_uvs[i][1];
+        attributes[i].data[5] = indexed_normals[i][0];
+        attributes[i].data[6] = indexed_normals[i][1];
+        attributes[i].data[7] = indexed_normals[i][2];
     }
 
     ///////////////////////////////
