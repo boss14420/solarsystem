@@ -95,13 +95,15 @@ ShaderProgram::ShaderProgram(ShaderProgram &&sp)
 }
 
 ShaderProgram::~ShaderProgram() {
-    glDeleteProgram(_programID);
+    if (glIsProgram(_programID))
+        glDeleteProgram(_programID);
     _programID = 0;
 }
 
 GLint ShaderProgram::link(Shader const &vertex_shader, Shader const &frag_shader)
 {
-    glDeleteProgram(_programID);
+    if (glIsProgram(_programID))
+        glDeleteProgram(_programID);
 
     // Link the program
     std::fputs("Linking program\n", stdout);

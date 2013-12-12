@@ -50,7 +50,7 @@ static Float sight_x = 0.0f, sight_y = -0.43f, sight_z = -0.9f;
 static Float up_x = 0.0f, up_y = 1.0f;
 static Float cam_xz_angle = 0.0f, cam_y_angle = -0.45f;
 static Float cam_z_angle = M_PI_2;
-static bool orbits = false;
+static bool orbits = true;
 static unsigned last_time = 0, frames = 0;
 //static SDL_Window *window = NULL;
 //static TTF_Font *font = NULL;
@@ -276,17 +276,10 @@ int main(int argc, char **argv) {
 
     glClearColor(0.0f, 0.4f, 0.0f, 0.0f);
 
-//    glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
-//    glEnable(GL_LIGHTING);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-//    Float sun_d[] = {7.0f, 7.0f, 7.0f, 1.0f};
-//    glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_d);
-//    glEnable(GL_LIGHT0);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 //    glClearDepth(1.0);
     glClear(GL_DEPTH_BUFFER_BIT);

@@ -41,11 +41,6 @@
 SolarSystem::SolarSystem()
     : _model_matrix (1.0f)//, _display_orbit(false)
 {
-//    _shader_program = LoadShaders("vertex.glsl", "frag.glsl");
-//    Model::load_model("earth.obj", _shader_program);
-
-//    Planet::_sphere_model.load_model(SPHERE_MODEL, PLANET_VERT_SHADER, PLANET_FRAG_SHADER);
-//    Star::_sphere_model.load_model(SPHERE_MODEL, STAR_VERT_SHADER, STAR_FRAG_SHADER);
     Planet::_sphere_model.load_model(SPHERE_MODEL);
     Planet::_orbit_model.generate(200, 1.0);
 
