@@ -7,6 +7,7 @@ find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLFW REQUIRED glfw3)
 #pkg_search_module(GLEW REQUIRED glew)
 pkg_search_module(SDL2 REQUIRED sdl2)
+pkg_search_module(LIBPNG REQUIRED libpng)
 
 if(USE_OPENGLES)
     pkg_search_module(GLESv2 REQUIRED glesv2)
@@ -62,8 +63,10 @@ set(SRC_FILES
 
 message(STATUS ${SDL2_INCLUDE_DIRS})
 message(STATUS ${GLESv2_INCLUDE_DIRS})
+message(STATUS ${LIBPNG_INCLUDE_DIRS})
 message(STATUS ${SDL2_LIBRARIES})
 message(STATUS ${GL_LIBRARY})
+message(STATUS ${LIBPNG_LIBRARIES})
 
 
 
@@ -80,4 +83,5 @@ target_link_libraries(solarsystem
     ${GL_LIBRARY}
     ${SDL2_LIBRARIES}
     ${GLFW_LIBRARIES}
+    ${LIBPNG_LIBRARIES}
 )

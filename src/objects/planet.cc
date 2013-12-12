@@ -37,7 +37,7 @@ Planet::Planet(PlanetData const &pd)
     orbitZ(0),
     orbitPHI(pd.orbitPHI),
     phase(0),
-    _texture(loadDDS(pd.texture_file)),
+    _texture(loadTexture(pd.texture_file)),
     _orbit_model_matrix(1.0f),
     _sphere_model_matrix(glm::scale(radius, radius, radius))
 {
