@@ -25,15 +25,16 @@
     #define PLANET_FRAG_SHADER "shaders/sphere.gl.frag"
     #define PLANET_VERT_SHADER "shaders/sphere.gl.vert"
     #define STAR_FRAG_SHADER "shaders/star.gl.frag"
-    #define STAR_VERT_SHADER "shaders/sphere.gl.vert"
+    #define STAR_VERT_SHADER "shaders/star.gl.vert"
 #else
     #define PLANET_FRAG_SHADER "shaders/sphere.gl.frag"
     #define PLANET_VERT_SHADER "shaders/sphere.gl.vert"
     #define STAR_FRAG_SHADER "shaders/star.gl.frag"
-    #define STAR_VERT_SHADER "shaders/sphere.gl.vert"
+    #define STAR_VERT_SHADER "shaders/star.gl.vert"
 #endif
 #define SPHERE_MODEL "objects/earth.obj"
 #define SIMPLE_FRAG_SHADER "shaders/simple.gl.frag"
+#define SIMPLE_VERT_SHADER "shaders/simple.gl.vert"
 ///////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -55,13 +56,15 @@ SolarSystem::SolarSystem()
 #endif
     Shader planet_vertex_shader(GL_VERTEX_SHADER, PLANET_VERT_SHADER, DEFINITION),
            planet_frag_shader(GL_FRAGMENT_SHADER, PLANET_FRAG_SHADER, DEFINITION),
+           star_vertex_shader(GL_VERTEX_SHADER, STAR_VERT_SHADER, DEFINITION),
            star_frag_shader(GL_FRAGMENT_SHADER, STAR_FRAG_SHADER, DEFINITION),
+           orbit_vertex_shader(GL_VERTEX_SHADER, SIMPLE_VERT_SHADER, DEFINITION),
            orbit_frag_shader(GL_FRAGMENT_SHADER, SIMPLE_FRAG_SHADER, DEFINITION);
 #undef DEFINITION
 
-    _star_shader_program.link(planet_vertex_shader, star_frag_shader);
+    _star_shader_program.link(star_vertex_shader, star_frag_shader);
     _planet_shader_program.link(planet_vertex_shader, planet_frag_shader);
-    _orbit_shader_program.link(planet_vertex_shader, orbit_frag_shader);
+    _orbit_shader_program.link(orbit_vertex_shader, orbit_frag_shader);
 }
 
 
@@ -78,6 +81,7 @@ mat4 SolarSystem::render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix, 
     _planet_shader_program.use();
     Planet::_sphere_model.use_program(_planet_shader_program);
     Planet::_sphere_model.prepare_render(model_matrix, view_matrix, mvp_matrix);
+    Planet::_sphere_model.set_light_position(0, 0, 0);
     for (auto const &planet : _planet_list) {
         planet.render(model_matrix, mvp_matrix);
     }

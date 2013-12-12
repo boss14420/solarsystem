@@ -72,8 +72,13 @@ public:
     void use_program(ShaderProgram const &sp);
 
     void prepare_render(mat4 const &model_matrix, 
-                         mat4 const &view_matrix, 
-                         mat4 const &mvp_matrix) const;
+                        mat4 const &view_matrix, 
+                        mat4 const &mvp_matrix) const;
+
+    template <typename F>
+    void set_light_position(F x, F y, F z) const {
+        glUniform3f(LightPositionID, x, y, z);
+    }
 
     void render(mat4 const &model_matrix, mat4 const &mvp_matrix, GLuint texture) const;
 

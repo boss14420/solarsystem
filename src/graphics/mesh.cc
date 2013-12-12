@@ -142,8 +142,8 @@ void Mesh::feed_buffers() const
 }
 
 void Mesh::prepare_render (mat4 const &model_matrix, 
-                            mat4 const &view_matrix, 
-                            mat4 const &mvp_matrix) const
+                           mat4 const &view_matrix, 
+                           mat4 const &mvp_matrix) const
 {
 //    glUseProgram(shader_program);
     feed_buffers();
@@ -154,7 +154,7 @@ void Mesh::prepare_render (mat4 const &model_matrix,
 
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp_matrix[0][0]);
     glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &view_matrix[0][0]);
-    glUniform3f(LightPositionID, 0.0f, 0.0f, 0.0f);
+//    glUniform3fv(LightPositionID, 1, &light_position[0]);
 //    (void*) &model_matrix;
 }
 

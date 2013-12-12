@@ -7,9 +7,10 @@
 
 varying vec2 UV;
 varying vec3 Position_worldspace;
-varying vec3 Normal_cameraspace;
+//varying vec3 Normal_cameraspace;
 //varying vec3 EyeDirection_cameraspace;
-varying vec3 LightDirection_cameraspace;
+//varying vec3 LightDirection_cameraspace;
+varying vec3 Normal_worldspace;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D texture;
@@ -21,13 +22,13 @@ void main(){
 	// Light emission properties
 	// You probably want to put them as uniforms
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 3.0;
+	float LightPower = 5.0;
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = texture2D( texture, UV ).rgb;
 	vec3 MaterialAmbientColor = vec3(0.15,0.15,0.15) * MaterialDiffuseColor;
 	//vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
-
+#if 0
 	// Distance to the light
 	float distance = length( light_position_worldspace - Position_worldspace );
 
@@ -51,7 +52,14 @@ void main(){
 	//  - Looking into the reflection -> 1
 	//  - Looking elsewhere -> < 1
 	//float cosAlpha = clamp( dot( E,R ), 0.0, 1.0 );
-	
+#endif
+        
+        vec3 LightDirection_worldspace = light_position_worldspace - Position_worldspace;
+        float distance = length(LightDirection_worldspace);
+        vec3 n = normalize(Normal_worldspace);
+        vec3 l = normalize(LightDirection_worldspace);
+        float cosTheta = clamp(dot(n, l), 0.0, 1.0);
+        
 	gl_FragColor.rgb = 
 		// Ambient : simulates indirect lighting
 		MaterialAmbientColor +
