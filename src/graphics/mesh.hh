@@ -31,14 +31,21 @@
 class Mesh : public Model {
 private:
     std::vector<index_type> indices;
-    std::vector<vec3data> indexed_vertices;
-    std::vector<vec2data> indexed_uvs;
-    std::vector<vec3data> indexed_normals;
+    struct __attribute__ ((__packed__)) attrib {
+        FloatData indexed_vertex[3];
+        FloatData indexed_uv[2];
+        FloatData indexed_normal[3];
+    };
 
-    GLuint element_buffer;
-    GLuint vertex_buffer, vertexID;
-    GLuint uv_buffer, uvID;
-    GLuint normal_buffer, normalID;
+    std::vector<attrib> attributes;
+    static const std::size_t VERTEX_OFFSET = 0;
+    static const std::size_t UV_OFFSET = VERTEX_OFFSET + 3*sizeof(FloatData);
+    static const std::size_t NORMAL_OFFSET = UV_OFFSET + 2*sizeof(FloatData);
+
+    GLuint element_buffer, attributes_buffer; 
+    GLuint vertexID;
+    GLuint uvID;
+    GLuint normalID;
 
     GLuint textureID;
     GLuint ModelMatrixID, ViewMatrixID, MatrixID, LightPositionID;
@@ -54,12 +61,6 @@ public:
 
     Mesh(Mesh const &) = delete;
     Mesh (Mesh&& model);
-//        : _scale_factor(model._scale_factor),
-//          _texture(model._texture),
-//          _model_matrix(std::move(model._model_matrix))
-//    {
-//        model._texture = 0;
-//    }
 
     ~Mesh();
 
