@@ -25,20 +25,14 @@
 #include <cstdint>
 #include <climits>
 
-#ifdef USE_OPENGLES
-#include <glm/gtc/half_float.hpp>
-    #define USE_HALFFLOAT
-//    #define USE_FLOAT
-#else
-    #define USE_FLOAT
-#endif
-
 #ifdef USE_HALFFLOAT
+    #include <glm/gtc/half_float.hpp>
     typedef GLfloat Float;
     typedef glm::half FloatData;
     #define FLOAT_TYPE GL_FLOAT
     #define FLOAT_DATA_TYPE GL_LOW_FLOAT
 #else
+    #define USE_FLOAT
     #define FLOAT_DATA_TYPE GL_FLOAT
     typedef GLfloat Float;
     typedef GLfloat FloatData;

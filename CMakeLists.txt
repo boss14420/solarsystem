@@ -12,10 +12,14 @@ if(USE_OPENGLES)
     pkg_search_module(GLESv2 REQUIRED glesv2)
     set(GL_LIBRARY ${GLESv2_LIBRARIES})
     add_definitions(-DUSE_OPENGLES)
+    if(USE_HALFFLOAT)
+        add_definitions(-DUSE_HALFFLOAT)
+    endif(USE_HALFFLOAT)
 else(USE_OPENGLES)
     find_package(OpenGL REQUIRED)
     set(GL_LIBRARY ${OPENGL_LIBRARY})
 endif(USE_OPENGLES)
+
 
 include_directories(
     .

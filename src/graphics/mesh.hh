@@ -31,16 +31,24 @@
 class Mesh : public Model {
 private:
     std::vector<index_type> indices;
-    struct __attribute__ ((__packed__)) attrib {
-        FloatData indexed_vertex[3];
-        FloatData indexed_uv[2];
-        FloatData indexed_normal[3];
+    static const std::size_t VERTEX_ATTRIB_SIZE = 3;
+    static const std::size_t UV_ATTRIB_SIZE = 2;
+    static const std::size_t NORMAL_ATTRIB_SIZE = 3;
+    static const std::size_t ATTRIB_SIZE = VERTEX_ATTRIB_SIZE + UV_ATTRIB_SIZE + NORMAL_ATTRIB_SIZE;
+
+    struct attrib {
+        FloatData data[ATTRIB_SIZE];
     };
+//    struct __attribute__ ((__packed__)) attrib {
+//        FloatData indexed_vertex[3];
+//        FloatData indexed_uv[2];
+//        FloatData indexed_normal[3];
+//    };
 
     std::vector<attrib> attributes;
     static const std::size_t VERTEX_OFFSET = 0;
-    static const std::size_t UV_OFFSET = VERTEX_OFFSET + 3*sizeof(FloatData);
-    static const std::size_t NORMAL_OFFSET = UV_OFFSET + 2*sizeof(FloatData);
+    static const std::size_t UV_OFFSET = VERTEX_OFFSET + VERTEX_ATTRIB_SIZE*sizeof(FloatData);
+    static const std::size_t NORMAL_OFFSET = UV_OFFSET + UV_ATTRIB_SIZE*sizeof(FloatData);
 
     GLuint element_buffer, attributes_buffer; 
     GLuint vertexID;

@@ -44,16 +44,16 @@ bool Mesh::load_model(char const *model_file)
         return false;
 
     //    std::vector<unsigned short> indices;
-    std::vector<vec3> indexed_vertices;
-    std::vector<vec2> indexed_uvs;
-    std::vector<vec3> indexed_normals;
+    std::vector<vec3data> indexed_vertices;
+    std::vector<vec2data> indexed_uvs;
+    std::vector<vec3data> indexed_normals;
     indexVBO(vertices, uvs, normals, indices, indexed_vertices, indexed_uvs, indexed_normals);
 
     attributes.resize(indexed_vertices.size());
     for(std::size_t i = 0; i != indexed_vertices.size(); ++i) {
-        attributes[i] = { {indexed_vertices[i][0],indexed_vertices[i][1], indexed_vertices[i][2]},
-                          {indexed_uvs[i][0], indexed_uvs[i][1]},
-                          {indexed_normals[i][0],indexed_normals[i][1],indexed_normals[i][2]} };
+        attributes[i] = { indexed_vertices[i][0],indexed_vertices[i][1], indexed_vertices[i][2],
+                          indexed_uvs[i][0], indexed_uvs[i][1],
+                          indexed_normals[i][0],indexed_normals[i][1],indexed_normals[i][2] };
     }
 
     ///////////////////////////////
