@@ -26,9 +26,34 @@
 ///// Shader methods /////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-Shader::Shader(GLenum shader_type, char const *shader_file, char const *prefix_str /* = nullptr */)
-    : _shader_type(shader_type)
+Shader::Shader(GLenum shader_type, char const *shader_file, char const *prefix_str)
 {
+    load_file(shader_type, shader_file, prefix_str);    
+}
+
+
+Shader::Shader(Shader &&s)
+    : _shader_type(s._shader_type),
+      _shaderID(s._shaderID)
+{
+    s._shaderID = 0;
+}
+
+
+Shader::~Shader() {
+    if (glIsShader(_shaderID))
+        glDeleteShader(_shaderID);
+    _shaderID = 0;
+}
+
+
+GLint Shader::load_file(GLenum shader_type, char const *shader_file, char const *prefix_str)
+{
+    if (glIsShader(_shaderID))
+        glDeleteShader(_shaderID);
+
+    _shader_type = shader_type;
+
     // Read from file
     std::string shader_code = prefix_str, line;
     shader_code += '\n';
@@ -51,9 +76,9 @@ Shader::Shader(GLenum shader_type, char const *shader_file, char const *prefix_s
     glCompileShader(_shaderID);
 
     // Check shader
-//    GLint result = GL_FALSE;
+    GLint result = GL_FALSE;
     int InfoLogLength;
-//    glGetShaderiv(_shaderID, GL_COMPILE_STATUS, &result);
+    glGetShaderiv(_shaderID, GL_COMPILE_STATUS, &result);
     glGetShaderiv(_shaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if (InfoLogLength > 0) {
         std::vector<char> shader_error_message(InfoLogLength + 1);
@@ -61,23 +86,9 @@ Shader::Shader(GLenum shader_type, char const *shader_file, char const *prefix_s
         std::fputs(shader_error_message.data(), stderr);
         std::fputc('\n', stderr);
     }
+
+    return result;
 }
-
-
-Shader::Shader(Shader &&s)
-    : _shader_type(s._shader_type),
-      _shaderID(s._shaderID)
-{
-    s._shaderID = 0;
-}
-
-
-Shader::~Shader() {
-    glDeleteShader(_shaderID);
-    _shaderID = 0;
-}
-
-
 
 //////////////////////////////////////////////////////////////////////
 ///// ShaderProgram methods //////////////////////////////////////////
@@ -86,6 +97,11 @@ Shader::~Shader() {
 ShaderProgram::ShaderProgram(Shader const &vertex_shader, Shader const &frag_shader)
 {
     link(vertex_shader, frag_shader);    
+}
+
+ShaderProgram::ShaderProgram(char const *vert_file, char const *frag_file, char const *prefix)
+{
+    link(vert_file, frag_file, prefix);
 }
 
 ShaderProgram::ShaderProgram(ShaderProgram &&sp)
@@ -125,6 +141,16 @@ GLint ShaderProgram::link(Shader const &vertex_shader, Shader const &frag_shader
     }
 
     return result;
+}
+
+GLint ShaderProgram::link(char const *vert_file, char const *frag_file, char const *prefix)
+{
+    if (glIsProgram(_programID))
+        glDeleteProgram(_programID);
+
+    Shader vertex_shader(GL_VERTEX_SHADER, vert_file, prefix);
+    Shader frag_shader(GL_FRAGMENT_SHADER, frag_file, prefix);
+    return link(vertex_shader, frag_shader);
 }
 
 GLint ShaderProgram::get_uniform_location(GLchar const *name) const {

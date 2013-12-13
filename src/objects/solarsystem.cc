@@ -38,29 +38,21 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 
-SolarSystem::SolarSystem()
-    : _model_matrix (1.0f)//, _display_orbit(false)
-{
-    Planet::_sphere_model.load_model(SPHERE_MODEL);
-    Planet::_orbit_model.generate(200, 1.0);
-
 #ifdef USE_HALFFLOAT
     #define DEFINITION "#define USE_HALFFLOAT"
 #else
     #define DEFINITION ""
 #endif
-    Shader planet_vertex_shader(GL_VERTEX_SHADER, PLANET_VERT_SHADER, DEFINITION),
-           planet_frag_shader(GL_FRAGMENT_SHADER, PLANET_FRAG_SHADER, DEFINITION),
-           star_vertex_shader(GL_VERTEX_SHADER, STAR_VERT_SHADER, DEFINITION),
-           star_frag_shader(GL_FRAGMENT_SHADER, STAR_FRAG_SHADER, DEFINITION),
-           orbit_vertex_shader(GL_VERTEX_SHADER, SIMPLE_VERT_SHADER, DEFINITION),
-           orbit_frag_shader(GL_FRAGMENT_SHADER, SIMPLE_FRAG_SHADER, DEFINITION);
-#undef DEFINITION
-
-    _star_shader_program.link(star_vertex_shader, star_frag_shader);
-    _planet_shader_program.link(planet_vertex_shader, planet_frag_shader);
-    _orbit_shader_program.link(orbit_vertex_shader, orbit_frag_shader);
+SolarSystem::SolarSystem()
+    : _model_matrix (1.0f),
+      _star_shader_program(STAR_VERT_SHADER, STAR_FRAG_SHADER, DEFINITION),
+      _planet_shader_program(PLANET_VERT_SHADER, PLANET_FRAG_SHADER, DEFINITION),
+      _orbit_shader_program(SIMPLE_VERT_SHADER, SIMPLE_FRAG_SHADER, DEFINITION)
+{
+    Planet::_sphere_model.load_model(SPHERE_MODEL);
+    Planet::_orbit_model.generate(200, 1.0);
 }
+#undef DEFINITION
 
 
 mat4 SolarSystem::render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix, bool orbit) const

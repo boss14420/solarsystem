@@ -32,8 +32,10 @@ public:
     Shader() = default;
     Shader(Shader &&s);
     Shader(Shader const &s) = delete;
-    Shader(GLenum shader_type, char const *shader_file, char const *prefix_str);
+    Shader(GLenum shader_type, char const *shader_file, char const *prefix_str = "");
     ~Shader();
+
+    GLint load_file(GLenum shader_type, char const *shader_file, char const *prefix_str = ""); 
 
     friend class ShaderProgram;
 };
@@ -47,11 +49,12 @@ public:
     ShaderProgram() = default;
     ShaderProgram(ShaderProgram const &sp) = delete;
     ShaderProgram(ShaderProgram &&sp);
-    ShaderProgram(char const *vert, char const *frag, char const *prefix = nullptr);
+    ShaderProgram(char const *vert_file, char const *frag_file, char const *prefix = "");
     ShaderProgram(Shader const &vertex_shader, Shader const &frag_shader);
     ~ShaderProgram();
 
     GLint link(Shader const &vertex_shader, Shader const &frag_shader);
+    GLint link(char const *vert_file, char const *frag_file, char const *prefix = "");
 
     GLint get_uniform_location(GLchar const *name) const;
     GLint get_attrib_location(GLchar const *name) const;

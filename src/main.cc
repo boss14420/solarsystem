@@ -14,9 +14,6 @@
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL.h>
-//#include <GL/glfw.h>
-//#include <GL/gl.h>
-//#include <GL/glu.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -33,17 +30,9 @@
 
 #include "config.hh"
 #include "constants.h"
-//#include "rendering.h"
-//#include "bmp_loader.h"
-//#include "planet.h"
+#include "graphics/background.hh"
 #include "objects/solarsystem.hh"
 #include "objects/planetdata.hh"
-
-//#include "common/shader.hpp"
-////#include "common/controls.hpp"
-//#include "common/texture.hpp"
-//#include "common/objloader.hpp"
-//#include "common/vboindexer.hpp"
 
 static Float xpos = 0.0f, ypos = 3.0f, zpos = 5.5f;
 static Float sight_x = 0.0f, sight_y = -0.43f, sight_z = -0.9f;
@@ -57,7 +46,7 @@ static unsigned last_time = 0, frames = 0;
 
 static mat4 ProjectionMatrix;
 
-void renderScene(const SolarSystem &solarsystem) {
+void renderScene(const SolarSystem &solarsystem, const Background &sky) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //    glLoadIdentity();
     mat4 ModelMatrix, ViewMatrix, MVP;
@@ -74,52 +63,26 @@ void renderScene(const SolarSystem &solarsystem) {
 
 //    ProjectionMatrix = glm::perspective(45.0f, (float) 800/600, 0.1f, 50.0f);
     
+//    drawAxes(ViewMatrix, MVP);
+
     MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+
+    // TODO: draw axes
+    sky.render();
     solarsystem.render(ModelMatrix, ViewMatrix, MVP, orbits);
 
-//    Float sun_p[] = {0.0f, 0.0f, 0.0f, 1.0f};
-////    glLightfv(GL_LIGHT0, GL_POSITION, sun_p);
-//    glUniform4fv(sunlight_positionID, 1, sun_p);
-
-    //drawAxes();
-//    drawSky();
-
-//    drawSun();
-//    drawPlanets(orbits);
-//    if (font)
-//        drawStats(font, 1000 * frames / SDL_GetTicks());
-
-//    SDL_GL_SwapWindow(window);
-//    glfwSwapBuffers(window);
 }
 
 void reshape(int w, int h) {
-    if (!h)
-        h = 1;
-//
+    if (!h) h = 1;
     glViewport(0, 0, (GLint) w, (GLint) h);
-//
-////    glMatrixMode(GL_PROJECTION);
-////    glLoadIdentity();
-////
-////    gluPerspective(45.0f, (float) w/h, 0.1f, 50.0f);
     ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.1f, 50.0f);
-//
-////    glMatrixMode(GL_MODELVIEW);
 }
 
 void keyboard(SDL_Window *window, SDL_Scancode scancode) {
-//void keyboard(GLFWwindow *window, int key, int scancode, int action, int mods) {
-//    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-//        glfwSetWindowShouldClose(window, GL_TRUE);
-
     Uint32 flags;
-//
-//    if (action != GLFW_PRESS && action != GLFW_REPEAT)
-//        return;
 
     switch (scancode) {
-//        case GLFW_KEY_ESCAPE:
 //        case SDL_SCANCODE_Q:
 //            glfwSetWindowShouldClose(window, GL_TRUE);
 //            break;
@@ -211,7 +174,7 @@ int main(int argc, char **argv) {
 #ifdef USE_OPENGLES
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles2", SDL_HINT_OVERRIDE);
 #endif
-    SDL_Window *window = SDL_CreateWindow("Solar system", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 600, 400, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    SDL_Window *window = SDL_CreateWindow("Solar system", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 400, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (window == nullptr) {
         SDL_Log("Couldn't create SDL Window: %s\n", SDL_GetError());
         return 1;
@@ -222,48 +185,9 @@ int main(int argc, char **argv) {
         return 1;
     }
 //    SDL_GL_SetSwapInterval(1); // Enable VSYNC
-    reshape(600, 400); // SDL does not send resize event on startup
+    reshape(800, 400); // SDL does not send resize event on startup
 
 //    font = TTF_OpenFont("Vera.ttf", 16);
-
-
-//    // Initialise GLFW
-//    if (!glfwInit()) {
-//        std::fputs("Failed to initialize GLFW\n", stderr);
-//        return -1;
-//    }
-//
-//    glfwDefaultWindowHints();
-//    glfwWindowHint(GLFW_SAMPLES, 4);
-//#ifdef USE_OPENGLES
-//    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-//#else
-//    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-//#endif
-//    glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
-//    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-//    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 0);
-
-    // Open a window and create its OpenGL context
-//    window = glfwOpenWindow( 800, 600, 0,0,0,0, 32,0, GLFW_WINDOW );
-//    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-//    int width = mode->width * 2 / 3;
-//    int height = mode->height * 2 / 3;
-//    GLFWwindow *window = glfwCreateWindow(width, height, "Solar system", nullptr, nullptr); 
-//    if (!window) {
-//        std::fputs( "Failed to open GLFW window.\n", stderr );
-//        glfwTerminate();
-//        return -1;
-//    }
-//    ProjectionMatrix = glm::perspective(45.0f, (float) width/height, 0.1f, 50.0f);
-//
-//    glfwMakeContextCurrent(window);
-//    glfwSetKeyCallback(window, keyboard);
-//    glfwSetFramebufferSizeCallback(window, reshape);
 
 //    if (glewInit() != GLEW_OK) {
 //        std::fputs("Failed to initialize GLEW\n", stderr);
@@ -272,8 +196,6 @@ int main(int argc, char **argv) {
 
     std::fprintf(stderr, "Using OpenGL version: %s\n", glGetString(GL_VERSION));
 
-//    glfwEnable (GLFW_STICKY_KEYS);
-
     glClearColor(0.0f, 0.4f, 0.0f, 0.0f);
 
     glEnable(GL_DEPTH_TEST);
@@ -281,22 +203,19 @@ int main(int argc, char **argv) {
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//    glClearDepth(1.0);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    SolarSystem solarsystem;
-//    solarsystem.add_planet(1.0f, 1.0f, 0.016f, SIDERIAL_YEAR, 1.0f, 0.0f, EARTH_AXIS_INCLINATION, 0.0f, 0.0f, "textures/earth.bmp", -M_PI);
-//    solarsystem.set_sun(   EARTH_RADIUS * 5,   0.0f,  0.0f,   1.0f,          25.0f, 0.0f,  0.0f,                   0.0f,   0.0f,  "textures/sun.bmp",  -M_PI);
-////    solarsystem.add_planet(EARTH_RADIUS,        1.0f,  0.016f, SIDERIAL_YEAR, 1.0f,  0.0f,  EARTH_AXIS_INCLINATION, 0.0f,   0.0f,  "textures/earth.bmp",-M_PI);
-//    auto &earth = solarsystem.add_planet(EARTH_RADIUS,        1.0f,  0.016f, SIDERIAL_YEAR, 1.0f,  0.0f,  EARTH_AXIS_INCLINATION, 0.0f,   0.0f,  "textures/earth.bmp",-M_PI);
-//    earth.add_moon(        MOON_RADIUS,         MOON_ORBIT_RADIUS, 0.05f, SIDERIAL_MONTH, SIDERIAL_MONTH, MOON_INCLINATION, 6.68f, 0.0f, 0.0f, "textures/moon.bmp", 0.0f);
-//    solarsystem.add_planet(EARTH_RADIUS * 0.53, 1.52f, 0.09f,  686.9f,        1.02f, 1.85f, 25.19f,                 49.5f,  286.5, "textures/mars.bmp", -M_PI); // Mars
 
+    ///////////////////////////////////////
+    // Init objects
+
+    SolarSystem solarsystem;
     solarsystem.set_sun(sun_data);
     auto &earth = solarsystem.add_planet(planets_data[0]);
     earth.add_moon(moon_data);
     solarsystem.add_planet(planets_data[1]);
 
+    Background sky("textures/starmap");
 
     last_time = SDL_GetTicks();
     unsigned dt = 10, delta = 0;
@@ -323,17 +242,15 @@ int main(int argc, char **argv) {
             }
         }
 
-        renderScene(solarsystem);
+        renderScene(solarsystem, sky);
     
         unsigned time = SDL_GetTicks();
         delta += time - last_time;
         while (delta >= dt) { // Maintain constant physics step and free framerate
             solarsystem.move(dt);
-//            solarsystem.move(50);
             delta -= dt;
         }
         last_time = time;
-//        solarsystem.move(30);
         frames++;
         if (time - last_fps_print >= 1000) {
             if (print_fps)
@@ -341,14 +258,9 @@ int main(int argc, char **argv) {
             last_fps_print += 1000;
             frames = 0;
         }
-//        glfwPollEvents();
         SDL_GL_SwapWindow(window);
     } 
 
-
-//    glfwDestroyWindow(window);
-//    glfwTerminate();
-    
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
 

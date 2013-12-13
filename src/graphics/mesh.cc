@@ -142,7 +142,7 @@ void Mesh::prepare_render (mat4 const &model_matrix,
     ////////////////////////////////
     /// bind
 
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp_matrix[0][0]);
+    //glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp_matrix[0][0]);
     glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &view_matrix[0][0]);
 }
 
