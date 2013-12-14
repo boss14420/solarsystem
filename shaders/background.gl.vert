@@ -21,7 +21,7 @@ varying vec2 UV;
 void main(){
 
 	// Output position of the vertex, in clip space : mvp_matrix * position
-	gl_Position =  vec4(vertex_position, 0.99, 1.0);
+	gl_Position =  vec4(vertex_position, 0.99999997, 1.0);
 
         // UV of the vertex. No special space for this one.
         UV = vertex_uv;

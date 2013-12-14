@@ -51,6 +51,17 @@ SolarSystem::SolarSystem()
 {
     Planet::_sphere_model.load_model(SPHERE_MODEL);
     Planet::_orbit_model.generate(200, 1.0);
+
+    set_sun(sun_data);
+    for (auto const &pd : planets_data) {
+        add_planet(pd);
+    }
+
+    for (std::size_t i = 0; i != moons_data.size(); ++ i) {
+        for(auto const &moon_data : moons_data[i])
+            _planet_list[i].add_moon(moon_data);
+    }
+
 }
 #undef DEFINITION
 
@@ -64,6 +75,7 @@ mat4 SolarSystem::render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix, 
     Star::_sphere_model.use_program(_star_shader_program);
     Star::_sphere_model.prepare_render(model_matrix, view_matrix, mvp_matrix);
     mvp_matrix = _sun.render(model_matrix, mvp_matrix);
+
 
     _planet_shader_program.use();
     Planet::_sphere_model.use_program(_planet_shader_program);
@@ -80,20 +92,23 @@ mat4 SolarSystem::render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix, 
 //    for (auto const &planet : _planet_list)
 //        planet.render(mvp_matrix);
 
-    _orbit_shader_program.use();
-    Planet::_orbit_model.use_program(_orbit_shader_program);
-    Planet::_orbit_model.prepare_render(model_matrix, view_matrix, mvp_matrix);
     if (orbit) {
+//        glDepthFunc(GL_NEVER);
+        _orbit_shader_program.use();
+        Planet::_orbit_model.use_program(_orbit_shader_program);
+        Planet::_orbit_model.prepare_render(model_matrix, view_matrix, mvp_matrix);
         for (auto const &planet : _planet_list)
             planet.render_orbit(mvp_matrix);
+//        glDepthFunc(GL_LESS);
     }
+
 
     return mvp_matrix;
 }
 
-void SolarSystem::move (int elapse)
+void SolarSystem::physical_step (float elapsed, bool moving, bool spinning)
 {
-    _sun.move(elapse);
+    _sun.physical_step(elapsed, false, spinning);
     for (auto &planet : _planet_list)
-        planet.move(elapse);
+        planet.physical_step(elapsed, moving, spinning);
 }

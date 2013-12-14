@@ -8,7 +8,7 @@
 //#include <GL/glew.h>
 #include <GLES2/gl2.h>
 
-#include "../constants.h"
+//#include "../constants.h"
 #include "planet.hh"
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -26,6 +26,7 @@ Circle Planet::_orbit_model;
 
 Planet::Planet(PlanetData const &pd)
   : radius(pd.radius),
+    flattening(pd.flattening),
     semimajor_axis(pd.semimajor_axis),
     siderial_year(pd.siderial_year),
     siderial_day(pd.siderial_day),
@@ -39,23 +40,27 @@ Planet::Planet(PlanetData const &pd)
     phase(0),
     _texture(loadTexture(pd.texture_file)),
     _orbit_model_matrix(1.0f),
-    _sphere_model_matrix(glm::scale(radius, radius, radius))
+    _sphere_model_matrix(glm::scale(radius, radius*(1-flattening), radius))
 {
     semiminor_axis = semimajor_axis * std::sqrt(1.0f - pd.eccentricity*pd.eccentricity);
 //    texture = loadBMPTexture(texture_file);
 //    texture = loadDDS(texture_file);
 
-    _orbit_model_matrix *= glm::rotate(ECLIPTIC_INCLINATION, 0.0f, 0.0f, 1.0f);
+//    _orbit_model_matrix *= glm::rotate(ECLIPTIC_INCLINATION, 0.0f, 0.0f, 1.0f);
 
     _orbit_model_matrix *= glm::rotate(asc_node, 0.0f, 1.0f, 0.0f);
     _orbit_model_matrix *= glm::rotate(orbit_inclination, 0.0f, 0.0f, 1.0f);
     _orbit_model_matrix *= glm::rotate(arg_periapsis, 0.0f, 1.0f, 0.0f);
+
+    orbitX = semimajor_axis * cos(-orbitPHI);
+    orbitZ = semiminor_axis * sin(-orbitPHI);
 
     FLOG("Planet constructor, address %p, texture %u, texture file %s\n", this, _texture, pd.texture_file);
 }
 
 Planet::Planet(Planet &&rvalue) :
     radius(rvalue.radius),
+    flattening(rvalue.flattening),
     semimajor_axis(rvalue.semimajor_axis),
     semiminor_axis(rvalue.semiminor_axis),
     siderial_year(rvalue.siderial_year),
@@ -87,6 +92,7 @@ Planet& Planet::operator=(Planet &&p)
         return *this;
 
     radius = p.radius;
+    flattening = p.flattening;
     semiminor_axis = p.semimajor_axis;
     semiminor_axis = p.semiminor_axis;
     siderial_year = p.siderial_year;
@@ -114,21 +120,25 @@ Planet::~Planet() {
     glDeleteTextures(1, &_texture);
 }
 
-void Planet::move (int elapsed) {
-    orbitPHI += DAYS_PER_SECOND * 2*M_PI * elapsed / (1000 * siderial_year);
-    if (orbitPHI >= 2*M_PI)
-        orbitPHI -= 2*M_PI; // Keep it small
+void Planet::physical_step (float elapsed, bool moving, bool spinning) {
+    if (moving) {
+        orbitPHI += 2*M_PI * elapsed / (1000 * siderial_year);
+        if (orbitPHI >= 2*M_PI)
+            orbitPHI -= 2*M_PI; // Keep it small
 
-    // '-' for counterclockwise orbiting
-    orbitX = semimajor_axis * cos(-orbitPHI);
-    orbitZ = semiminor_axis * sin(-orbitPHI);
+        // '-' for counterclockwise orbiting
+        orbitX = semimajor_axis * cos(-orbitPHI);
+        orbitZ = semiminor_axis * sin(-orbitPHI);
+    }
 
-    phase += 360 * DAYS_PER_SECOND * elapsed / (1000 * siderial_day);
-    if (phase >= 360.0f)
-        phase -= 360.0f;
+    if (spinning) {
+        phase += 360 * elapsed / (1000 * siderial_day);
+        if (phase >= 360.0f)
+            phase -= 360.0f;
+    }
 
     for (auto it = moons.begin(); it != moons.end(); it++)
-        it->move(elapsed);
+        it->physical_step(elapsed, moving, spinning);
 }
 
 mat4 Planet::render(mat4 model_matrix, mat4 mvp_matrix) const {
@@ -164,12 +174,16 @@ mat4 Planet::render_orbit(mat4 matrix) const
 {
     matrix *= _orbit_model_matrix;
 //    matrix *= glm::rotate(90.0f, 1.0f, 0.0f, 0.f);
-    matrix *= glm::scale(semimajor_axis, 1.0f , semiminor_axis);
+
+    auto scale_matrix = glm::scale(semimajor_axis, 1.0f, semiminor_axis);
+//    matrix *= glm::scale(semimajor_axis, 1.0f , semiminor_axis);
 
     // draw
-    _orbit_model.render(glm::mat4(), matrix, 0);
+    _orbit_model.render(glm::mat4(), matrix * scale_matrix, 0);
+//    _orbit_model.render(glm::mat4(), matrix , 0);
 
     // render moons's orbit
+//    matrix *= glm::scale(1.0f / semimajor_axis, 1.0f, 1.0f / semiminor_axis);
     matrix *= glm::translate(orbitX, 0.0f, orbitZ);
     for (auto const &moon : moons)
         moon.render_orbit(matrix);

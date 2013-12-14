@@ -7,6 +7,7 @@ find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLFW REQUIRED glfw3)
 #pkg_search_module(GLEW REQUIRED glew)
 pkg_search_module(SDL2 REQUIRED sdl2)
+#pkg_search_module(SDL2_TTF REQUIRED SDL2_ttf)
 pkg_search_module(LIBPNG REQUIRED libpng)
 
 if(USE_OPENGLES)
@@ -43,6 +44,7 @@ set(HEADER_FILES
     "src/graphics/mesh.hh"
     "src/graphics/circle.hh"
     "src/graphics/background.hh"
+    #"src/graphics/text2Dprinter.hh"
     "src/objects/planet.hh"
     "src/objects/planetdata.hh"
     "src/objects/solarsystem.hh"
@@ -58,15 +60,18 @@ set(SRC_FILES
     "src/graphics/mesh.cc"
     "src/graphics/circle.cc"
     "src/graphics/background.cc"
+    #"src/graphics/text2Dprinter.cc"
     "src/objects/planet.cc"
     "src/objects/planetdata.cc"
     "src/objects/solarsystem.cc"
     )
 
 message(STATUS ${SDL2_INCLUDE_DIRS})
+#message(STATUS ${SDL2_TTF_INCLUDE_DIRS})
 message(STATUS ${GLESv2_INCLUDE_DIRS})
 message(STATUS ${LIBPNG_INCLUDE_DIRS})
 message(STATUS ${SDL2_LIBRARIES})
+#message(STATUS ${SDL2_TTF_LIBRARIES})
 message(STATUS ${GL_LIBRARY})
 message(STATUS ${LIBPNG_LIBRARIES})
 
@@ -86,4 +91,5 @@ target_link_libraries(solarsystem
     ${SDL2_LIBRARIES}
     ${GLFW_LIBRARIES}
     ${LIBPNG_LIBRARIES}
+    #${SDL2_TTF_LIBRARIES}
 )

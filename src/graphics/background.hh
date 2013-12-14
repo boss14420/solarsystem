@@ -24,6 +24,7 @@
 
 class Background {
 private:
+public:
     GLuint _textureID, _vertexID, _uvID;
     GLuint _texture, _vertexbuffer, _uvbuffer;
     ShaderProgram _shader_program;

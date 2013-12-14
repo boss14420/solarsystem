@@ -113,18 +113,20 @@ void Circle::prepare_render (mat4 const &model_matrix,
 ////
 void Circle::render (mat4 const &model_matrix, mat4 const &mvp_matrix, GLuint texture) const
 {
+    static const auto draw_type = GL_LINE_STRIP;
+
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp_matrix[0][0]);
-    glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
+    glDrawArrays(draw_type, 0, vertices.size());
 
     auto mvp2 = glm::scale(mvp_matrix, glm::vec3(1, 1, -1));
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp2[0][0]);
-    glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
+    glDrawArrays(draw_type, 0, vertices.size());
 
     mvp2 = glm::scale(mvp_matrix, glm::vec3(-1, 1, 1));
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp2[0][0]);
-    glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
+    glDrawArrays(draw_type, 0, vertices.size());
 
     mvp2 = glm::scale(mvp_matrix, glm::vec3(-1, 1, -1));
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp2[0][0]);
-    glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
+    glDrawArrays(draw_type, 0, vertices.size());
 }

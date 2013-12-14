@@ -42,7 +42,7 @@ public:
     }
 
     mat4 render (mat4 model_matrix, mat4 view_matrix, mat4 mvp_matrix, bool orbit = false) const;
-    void move (int elapsed);
+    void physical_step (float elapsed, bool moving, bool spinning);
 
     template <typename... Args>
     Planet& add_planet (Args&&... args) 

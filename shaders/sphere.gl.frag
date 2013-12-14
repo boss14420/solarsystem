@@ -22,11 +22,11 @@ void main(){
 	// Light emission properties
 	// You probably want to put them as uniforms
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 5.0;
+	float LightPower = 50.0;
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = texture2D( texture, UV ).rgb;
-	vec3 MaterialAmbientColor = vec3(0.15,0.15,0.15) * MaterialDiffuseColor;
+	vec3 MaterialAmbientColor = vec3(0.07,0.07,0.07) * MaterialDiffuseColor;
 	//vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
 #if 0
 	// Distance to the light

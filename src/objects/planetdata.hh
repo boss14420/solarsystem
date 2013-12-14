@@ -23,7 +23,7 @@
 #include <vector>
 
 struct PlanetData {
-    Float radius, semimajor_axis, eccentricity;
+    Float radius, flattening, semimajor_axis, eccentricity;
     Float siderial_year, siderial_day;
     Float orbit_inclination, axis_inclination;
     Float asc_node, arg_periapsis;
@@ -33,6 +33,6 @@ struct PlanetData {
 
 extern const PlanetData sun_data;
 extern const std::vector<PlanetData> planets_data;
-extern const PlanetData moon_data;
+extern const std::vector<std::vector<PlanetData>> moons_data;
 
 #endif // __PLANETDATA_HH__

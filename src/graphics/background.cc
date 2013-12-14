@@ -52,9 +52,6 @@ Background::Background(char const *texture_file)
     _vertexID = _shader_program.get_attrib_location("vertex_position");
     _uvID = _shader_program.get_attrib_location("vertex_uv");
 
-    _texture = loadTexture("textures/starmap");
-
-    
     glGenBuffers(1, &_vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexbuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -67,6 +64,8 @@ Background::Background(char const *texture_file)
 
 Background::~Background() {
     glDeleteTextures(1, &_textureID);
+    glDeleteBuffers(1, &_vertexbuffer);
+    glDeleteBuffers(1, &_uvbuffer);
 }
 
 void Background::render() const {

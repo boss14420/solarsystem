@@ -51,4 +51,7 @@ typedef glm::detail::tvec4<Float> vec4;
 typedef std::uint16_t index_type;
 #define INDEX_TYPE GL_UNSIGNED_SHORT
 
+#include <cstdio>
+#define GL_LOG std::fprintf(stderr, "%s:%d: GL error code = 0x%x\n", __FILE__, __LINE__, glGetError())
+
 #endif // __CONFIG_HH__

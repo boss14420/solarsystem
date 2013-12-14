@@ -25,7 +25,7 @@ typedef Planet Moon;
 
 class Planet {
 private:
-    Float radius, semimajor_axis, semiminor_axis;
+    Float radius, flattening, semimajor_axis, semiminor_axis;
     Float siderial_year, siderial_day;
     Float orbit_inclination, axis_inclination;
     Float asc_node, arg_periapsis;
@@ -52,7 +52,7 @@ public:
 
     friend class SolarSystem;
 
-    void move (int elapsed);
+    void physical_step (float elapsed, bool moving, bool spinning);
     mat4 render (mat4 model_matrix, mat4 mvp_matrix) const;
     mat4 render_orbit (mat4 matrix) const;
 
