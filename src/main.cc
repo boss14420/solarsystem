@@ -31,7 +31,7 @@
 #include "config.hh"
 //#include "constants.h"
 #include "graphics/background.hh"
-#include "graphics/text2Dprinter.hh"
+//#include "graphics/text2Dprinter.hh"
 #include "objects/solarsystem.hh"
 //#include "rendering.h"
 
