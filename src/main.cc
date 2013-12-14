@@ -96,6 +96,37 @@ void reshape(int w, int h) {
     ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.0001f, 20.0f);
 }
 
+void mouse(SDL_Window *window, SDL_Event const &event) {
+    static Sint32 last_x = 0, last_y = 0;
+    Sint32 dx, dy;
+
+    switch(event.type) {
+        case SDL_MOUSEWHEEL:
+            xpos += sight_x * event.wheel.y * zoom_step;
+            ypos += sight_y * event.wheel.y * zoom_step;
+            zpos += sight_z * event.wheel.y * zoom_step;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (event.button.button == SDL_BUTTON_LEFT) {
+                last_x = event.button.x;
+                last_y = event.button.y;
+            }
+            break;
+        case SDL_MOUSEBUTTONUP:
+            if (event.button.button == SDL_BUTTON_LEFT) {
+                dx = event.button.x - last_x;
+                dy = event.button.y - last_y;
+                int width, height;
+                SDL_GetWindowSize(window, &width, &height);
+                xpos -= 20 * dx / (float)width;
+                ypos += 20 * dy / (float)height;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 void keyboard(SDL_Window *window, SDL_Scancode scancode) {
     Uint32 flags;
     std::size_t log_speed, tmp_speed;
@@ -288,6 +319,12 @@ int main(int argc, char **argv) {
                     break;
                 case SDL_KEYDOWN:
                     keyboard(window, event.key.keysym.scancode);
+                    break;
+                case SDL_MOUSEWHEEL:
+                case SDL_MOUSEBUTTONDOWN:
+                case SDL_MOUSEBUTTONUP:
+                case SDL_MOUSEMOTION:
+                    mouse(window, event);
                     break;
             }
         }
