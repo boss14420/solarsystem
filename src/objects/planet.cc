@@ -31,6 +31,7 @@ Planet::Planet(PlanetData const &pd)
   : radius(pd.radius),
     flattening(pd.flattening),
     semimajor_axis(pd.semimajor_axis),
+    eccentricity(pd.eccentricity),
     siderial_year(pd.siderial_year),
     siderial_day(pd.siderial_day),
     orbit_inclination(pd.orbit_inclination),
@@ -45,7 +46,7 @@ Planet::Planet(PlanetData const &pd)
     _orbit_model_matrix(1.0f),
     _sphere_model_matrix(glm::scale(radius, radius*(1-flattening), radius))
 {
-    semiminor_axis = semimajor_axis * std::sqrt(1.0f - pd.eccentricity*pd.eccentricity);
+    semiminor_axis = semimajor_axis * std::sqrt(1.0f - eccentricity*eccentricity);
 //    texture = loadBMPTexture(texture_file);
 //    texture = loadDDS(texture_file);
 
@@ -65,6 +66,7 @@ Planet::Planet(Planet &&rvalue) :
     radius(rvalue.radius),
     flattening(rvalue.flattening),
     semimajor_axis(rvalue.semimajor_axis),
+    eccentricity(rvalue.eccentricity),
     semiminor_axis(rvalue.semiminor_axis),
     siderial_year(rvalue.siderial_year),
     siderial_day(rvalue.siderial_day),
@@ -97,6 +99,7 @@ Planet& Planet::operator=(Planet &&p)
     radius = p.radius;
     flattening = p.flattening;
     semiminor_axis = p.semimajor_axis;
+    eccentricity = p.eccentricity;
     semiminor_axis = p.semiminor_axis;
     siderial_year = p.siderial_year;
     siderial_day = p.siderial_day;
@@ -125,17 +128,25 @@ Planet::~Planet() {
 
 void Planet::physical_step (float elapsed, bool moving, bool spinning) {
     if (moving) {
-        orbitPHI += 2*M_PI * elapsed / (1000 * siderial_year);
+        orbitPHI += 2*M_PI * elapsed / siderial_year;
         if (orbitPHI >= 2*M_PI)
             orbitPHI -= 2*M_PI; // Keep it small
 
+        double E = orbitPHI, epsilon = 1e-5;
+        if (eccentricity >= 0.8) E = M_PI;
+        double fE = E - eccentricity * std::sin(E) - orbitPHI;
+        while (std::abs(fE) >= epsilon) {
+            E -= fE / (1 - eccentricity * std::cos(E));
+            fE = E - eccentricity * std::sin(E) - orbitPHI;
+        }
+
         // '-' for counterclockwise orbiting
-        orbitX = semimajor_axis * cos(-orbitPHI);
-        orbitZ = semiminor_axis * sin(-orbitPHI);
+        orbitX = semimajor_axis * cos(-E);
+        orbitZ = semiminor_axis * sin(-E);
     }
 
     if (spinning) {
-        phase += 360 * elapsed / (1000 * siderial_day);
+        phase += 360 * elapsed / siderial_day;
         if (phase >= 360.0f)
             phase -= 360.0f;
     }

@@ -24,7 +24,7 @@ typedef Planet Moon;
 
 class Planet {
 private:
-    Float radius, flattening, semimajor_axis, semiminor_axis;
+    Float radius, flattening, semimajor_axis, eccentricity, semiminor_axis;
     Float siderial_year, siderial_day;
     Float orbit_inclination, axis_inclination;
     Float asc_node, arg_periapsis;

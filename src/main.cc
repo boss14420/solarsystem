@@ -407,7 +407,7 @@ int main(int argc, char **argv) {
     
         unsigned time = SDL_GetTicks();
         delta += time - last_time;
-        solarsystem.physical_step(((delta/dt)*dt) * seconds_per_day, moving, spinning);
+        solarsystem.physical_step(((delta/dt)*dt/1000.0) * seconds_per_day, moving, spinning);
         delta %= dt;
 //        while (delta >= dt) { // Maintain constant physics step and free framerate
 //            solarsystem.physical_step(dt * seconds_per_day, moving, spinning);
