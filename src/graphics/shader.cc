@@ -16,11 +16,18 @@
  * =====================================================================================
  */
 
+#include "../config.hh"
 #include "shader.hh"
 #include <string>
 #include <fstream>
 #include <vector>
 #include <cstdio>
+
+#ifndef NDEBUG
+    #define FLOG(STR, ...) std::fprintf(stderr, STR, __VA_ARGS__)
+#else
+    #define FLOG(STR, ...)
+#endif
 
 //////////////////////////////////////////////////////////////////////
 ///// Shader methods /////////////////////////////////////////////////
@@ -145,9 +152,11 @@ GLint ShaderProgram::link(Shader const &vertex_shader, Shader const &frag_shader
 
 GLint ShaderProgram::link(char const *vert_file, char const *frag_file, char const *prefix)
 {
+	GL_LOG;
     if (glIsProgram(_programID))
         glDeleteProgram(_programID);
-
+	GL_LOG;
+		
     Shader vertex_shader(GL_VERTEX_SHADER, vert_file, prefix);
     Shader frag_shader(GL_FRAGMENT_SHADER, frag_file, prefix);
     return link(vertex_shader, frag_shader);

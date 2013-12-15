@@ -19,7 +19,13 @@
 #ifndef __SHADER_HH__
 #define __SHADER_HH__
 
-#include <GLES2/gl2.h>
+#ifdef __MINGW32__
+	#include <GL/glew.h>
+#elif defined(USE_OPENGLES)
+	#include <GLES2/gl2.h>
+#else
+	#include <GL/gl.h>
+#endif
 
 class ShaderProgram;
 
@@ -56,8 +62,8 @@ public:
     GLint link(Shader const &vertex_shader, Shader const &frag_shader);
     GLint link(char const *vert_file, char const *frag_file, char const *prefix = "");
 
-    GLint get_uniform_location(GLchar const *name) const;
-    GLint get_attrib_location(GLchar const *name) const;
+    GLint get_uniform_location(char const *name) const;
+    GLint get_attrib_location(char const *name) const;
     GLenum use() const;
 };
 

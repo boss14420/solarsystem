@@ -19,8 +19,14 @@
 #ifndef __CONFIG_HH__
 #define __CONFIG_HH__
 
-//#include <GL/glew.h>
-#include <GLES2/gl2.h>
+#ifdef USE_OPENGLES
+    #include <GLES2/gl2.h>
+    #include <GLES2/gl2ext.h>
+#else
+    #include <GL/glew.h>
+    #include <GL/gl.h>
+#endif
+
 #include <glm/glm.hpp>
 #include <cstdint>
 #include <climits>
@@ -53,5 +59,18 @@ typedef std::uint16_t index_type;
 
 #include <cstdio>
 #define GL_LOG std::fprintf(stderr, "%s:%d: GL error code = 0x%x\n", __FILE__, __LINE__, glGetError())
+
+#ifndef NDEBUG
+    #define FLOG(STR, ...) std::fprintf(stderr, STR, __VA_ARGS__)
+#else
+    #define FLOG(STR, ...)
+#endif
+
+#ifndef M_PI
+	#define M_PI 3.141592654
+#endif
+#ifndef M_PI_2
+	#define M_PI_2 1.570796327
+#endif
 
 #endif // __CONFIG_HH__

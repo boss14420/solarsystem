@@ -1,7 +1,7 @@
 #include <vector>
 #include <cstring>
 
-#include <GLES2/gl2.h>
+#include "../config.hh"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

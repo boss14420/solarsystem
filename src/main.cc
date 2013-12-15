@@ -1,13 +1,13 @@
 
 // windows.h must be included before GL headers
 #ifdef _MSC_VER
-#define _USE_MATH_DEFINES
-#include <windows.h>
+//#define _USE_MATH_DEFINES
+//#include <windows.h>
 #endif
 
+#include "config.hh"
+
 //#include <GL/glew.h>
-#include <GLES2/gl2.h>
-#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_hints.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_video.h>
@@ -27,7 +27,6 @@
 #include <algorithm>
 
 #include "common/text2D.hpp"
-#include "config.hh"
 //#include "constants.h"
 #include "graphics/background.hh"
 //#include "graphics/text2Dprinter.hh"
@@ -42,6 +41,7 @@ static double up_x = 0.0f, up_y = 1.0f;
 static double  cam_xz_angle = 0.0f, cam_y_angle = -0.45f;
 static double  cam_z_angle = M_PI_2;
 static double  seconds_per_day = 1.0; static std::size_t speed = 16;
+static bool quit = false;
 static bool orbits = true;
 static bool display_stat = true;
 static bool moving = true, spinning = true;
@@ -74,19 +74,19 @@ void renderStat(SDL_Window *window, std::size_t frames)
     SDL_GetWindowSize(window, &width, &height);
 
     // FPS
-    std::snprintf(message, 100, "Framerate: %lu FPS", frames);
+    std::sprintf(message, "Framerate: %lu FPS", frames);
     printText2D(message, 10, height - fontsize, fontsize, width, height);
 
     // Eye
-    std::snprintf(message, 100, "Eye possition: (%.2f, %.2f, %.2f)", xpos, ypos, zpos);
+    std::sprintf(message, "Eye possition: (%.2f, %.2f, %.2f)", xpos, ypos, zpos);
     printText2D(message, 10, height - 2*fontsize, fontsize, width, height);
 
     // Zoom step
-    std::snprintf(message, 100, "Zoom step: %.5f", zoom_step);
+    std::sprintf(message, "Zoom step: %.5f", zoom_step);
     printText2D(message, 10, height - 3*fontsize, fontsize, width, height);
 
     // Speed
-    std::snprintf(message, 100, "Speed: %lu (1 second = %.3f days)", speed, seconds_per_day);
+    std::sprintf(message, "Speed: %lu (1 second = %.3f days)", speed, seconds_per_day);
     printText2D(message, 10, height - 4*fontsize, fontsize, width, height);
 }
 
@@ -128,7 +128,7 @@ void renderScene(const SolarSystem &solarsystem, const Background &sky) {
 void reshape(int w, int h) {
     if (!h) h = 1;
     glViewport(0, 0, (GLint) w, (GLint) h);
-    ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.0001f, 50.0f);
+    ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.001f, 50.0f);
 }
 
 
@@ -172,9 +172,9 @@ void keyboard(SDL_Window *window, SDL_Scancode scancode) {
     std::size_t log_speed, tmp_speed;
 
     switch (scancode) {
-//        case SDL_SCANCODE_Q:
-//            glfwSetWindowShouldClose(window, GL_TRUE);
-//            break;
+        case SDL_SCANCODE_Q:
+            quit = true;
+            break;
         case SDL_SCANCODE_W:
             xpos += sight_x * zoom_step;
             ypos += sight_y * zoom_step;
@@ -300,9 +300,11 @@ int main(int argc, char **argv) {
     /////////////////////////////////////////
     ///// Init SDL2
 
+	FLOG("%s", "Initializing SDL2\n");
     SDL_Init(SDL_INIT_EVERYTHING);
 //    TTF_Init();
     std::atexit(SDL_Quit);
+	
 
 #ifdef USE_OPENGLES
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles2", SDL_HINT_OVERRIDE);
@@ -310,9 +312,9 @@ int main(int argc, char **argv) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #else
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-//    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-//    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
     int multisampling = 4;
     if (argc > 2 && !std::strcmp(argv[1], "-m")) {
@@ -331,16 +333,22 @@ int main(int argc, char **argv) {
         SDL_Log("Coudn't create SDL GL contex: %s\n", SDL_GetError());
         return 1;
     }
+	
+#ifndef USE_OPENGLES
+	FLOG("%s", "Initializing glew...\n");
+    if (glewInit() != GLEW_OK) {
+        std::fputs("Failed to initialize GLEW\n", stderr);
+        return -1;
+    }
+#endif
+
+	
 //    SDL_GL_SetSwapInterval(1); // Enable VSYNC
     reshape(800, 400); // SDL does not send resize event on startup
 
 //    TTF_Font *font = TTF_OpenFont("Vera.ttf", 16);
 //    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-//    if (glewInit() != GLEW_OK) {
-//        std::fputs("Failed to initialize GLEW\n", stderr);
-//        return -1;
-//    }
 
     /////////////////////////////////////////
     ///// Init OpenGL
@@ -375,21 +383,20 @@ int main(int argc, char **argv) {
     unsigned dt = 10, delta = 0;
     unsigned last_fps_print = last_time, last_fps = 0;
 
-    bool running = true;
 //    bool print_fps = (argc >= 2 && argv[1][0] == 'f');
 //    char message[100] = "FPS = sfdkasfjhkahdsflahglashdhs";
-    while (running) {
+    while (!quit) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
-                    running = false;
+                    quit = true;
                     break;
                 case SDL_WINDOWEVENT:
                     if (event.window.event == SDL_WINDOWEVENT_RESIZED)
                         reshape(event.window.data1, event.window.data2);
                     else if (event.window.event == SDL_WINDOWEVENT_CLOSE)
-                        running = false;
+                        quit = true;
                     break;
                 case SDL_KEYDOWN:
                     keyboard(window, event.key.keysym.scancode);
@@ -417,7 +424,7 @@ int main(int argc, char **argv) {
         frames++;
         if (time - last_fps_print >= 1000) {
             last_fps = frames;
-//            std::snprintf(message, 100, "FPS: %.2f frame/s\n", (float)frames);
+//            std::sprintf(message, 100, "FPS: %.2f frame/s\n", (float)frames);
 //            if (print_fps)
 //                std::fputs(message, stderr);
             last_fps_print += 1000;

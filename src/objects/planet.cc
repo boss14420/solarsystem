@@ -5,15 +5,12 @@
 #define _USE_MATH_DEFINES
 #endif
 #include <cmath>
-//#include <GL/glew.h>
-#include <GLES2/gl2.h>
 
 //#include "../constants.h"
 #include "planet.hh"
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext.hpp>
 
 #include "../common/texture.hpp"
 

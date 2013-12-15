@@ -6,7 +6,7 @@
 #endif
 #include <cmath>
 //#include <GL/glew.h>
-#include <GLES2/gl2.h>
+#include <GL/gl.h>
 
 #include "constants.h"
 #include "star.hh"

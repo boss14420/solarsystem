@@ -19,8 +19,6 @@
 #ifndef __MESH_HH__
 #define __MESH_HH__
 
-//#include <GL/glew.h>
-#include <GLES2/gl2.h>
 #include <glm/glm.hpp>
 
 #include "../config.hh"

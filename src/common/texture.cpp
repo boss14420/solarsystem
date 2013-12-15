@@ -2,9 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#include <GL/glew.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include "texture.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////////
 ////// Load DDS texture
@@ -129,7 +127,6 @@ GLuint loadDDS(const char * imagepath){
 ////// Load PNG texture
 //////////////////////////////////////////////////////////////////////////////////////
 
-#include <GLES2/gl2.h>
 #include <png.h>
 #include <cstdio>
 #include <string>
@@ -140,6 +137,7 @@ GLuint loadDDS(const char * imagepath){
 
 GLuint loadPNG(const char *file_name)
 {
+//#if 0
     png_byte header[8];
 
     FILE *fp = fopen(file_name, "rb");
@@ -290,12 +288,17 @@ GLuint loadPNG(const char *file_name)
     free(row_pointers);
     fclose(fp);
     return texture;
+//#endif
+	//return 0;
 }
 
 
 GLuint loadTexture(char const *prefix) {
     static bool support_dxt1 = std::strstr(reinterpret_cast<char const*>(glGetString(GL_EXTENSIONS)), 
-                                           "GL_EXT_texture_compression_dxt1");
+                                           "GL_EXT_texture_compression_dxt1")
+							|| std::strstr(reinterpret_cast<char const*>(glGetString(GL_EXTENSIONS)), 
+                                           "GL_EXT_texture_compression_s3tc");
+											
     std::string filename = prefix;
     if (support_dxt1) {
         filename += ".dds";
