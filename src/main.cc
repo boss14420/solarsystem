@@ -59,7 +59,7 @@ void printState() {
 }
 
 void renderScene(const SolarSystem &solarsystem, const Background &sky) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //    glLoadIdentity();
     mat4 ModelMatrix, ViewMatrix, MVP;
 
@@ -84,16 +84,14 @@ void renderScene(const SolarSystem &solarsystem, const Background &sky) {
 
     // TODO: draw axes
 
-    solarsystem.render(ModelMatrix, ViewMatrix, MVP, orbits);
-//    glDepthFunc(GL_NEVER);
     sky.render();
-//    glDepthFunc(GL_LESS);
+    solarsystem.render(ModelMatrix, ViewMatrix, MVP, orbits);
 }
 
 void reshape(int w, int h) {
     if (!h) h = 1;
     glViewport(0, 0, (GLint) w, (GLint) h);
-    ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.0001f, 20.0f);
+    ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.0001f, 30.0f);
 }
 
 void mouse(SDL_Window *window, SDL_Event const &event) {
@@ -255,7 +253,16 @@ int main(int argc, char **argv) {
     std::atexit(SDL_Quit);
 #ifdef USE_OPENGLES
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles2", SDL_HINT_OVERRIDE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#else
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 #endif
+
     SDL_Window *window = SDL_CreateWindow("Solar system", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 400, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (window == nullptr) {
         SDL_Log("Couldn't create SDL Window: %s\n", SDL_GetError());

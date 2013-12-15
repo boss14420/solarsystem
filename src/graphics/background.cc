@@ -82,7 +82,10 @@ void Background::render() const {
     glEnableVertexAttribArray(_uvID);
     glBindBuffer(GL_ARRAY_BUFFER, _uvbuffer);
     glVertexAttribPointer(_uvID, 2, FLOAT_DATA_TYPE, GL_FALSE, 0, (void*)0);
-
+    
+    glDisable(GL_DEPTH_TEST);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
 }
 
