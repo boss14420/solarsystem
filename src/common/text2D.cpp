@@ -1,13 +1,14 @@
 #include <vector>
 #include <cstring>
 
-#include <GL/glew.h>
+#include <GLES2/gl2.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
-#include "shader.hpp"
+#include "../config.hh"
+#include "../graphics/shader.hh"
 #include "texture.hpp"
 
 #include "text2D.hpp"
@@ -19,35 +20,39 @@ unsigned int Text2DShaderID;               // Program used to disaply the text
 unsigned int vertexPosition_screenspaceID; // Location of the program's "vertexPosition_screenspace" attribute
 unsigned int vertexUVID;                   // Location of the program's "vertexUV" attribute
 unsigned int Text2DUniformID;              // Location of the program's texture attribute
+unsigned int windowSizeID;                 // Location of the program's "window_size" attribute
+ShaderProgram text2D_shader;
 
 void initText2D(const char * texturePath){
 
 	// Initialize texture
-	Text2DTextureID = loadTGA_glfw(texturePath);
+	Text2DTextureID = loadPNG(texturePath);
 
 	// Initialize VBO
 	glGenBuffers(1, &Text2DVertexBufferID);
 	glGenBuffers(1, &Text2DUVBufferID);
 
 	// Initialize Shader
-	Text2DShaderID = LoadShaders( "TextVertexShader.vertexshader", "TextVertexShader.fragmentshader" );
+        text2D_shader.link("shaders/TextVertexShader.vertexshader", "shaders/TextVertexShader.fragmentshader");
 
 	// Get a handle for our buffers
-	vertexPosition_screenspaceID = glGetAttribLocation(Text2DShaderID, "vertexPosition_screenspace");
-	vertexUVID = glGetAttribLocation(Text2DShaderID, "vertexUV");
+        vertexPosition_screenspaceID = text2D_shader.get_attrib_location("vertexPosition_screenspace");
+        vertexUVID = text2D_shader.get_attrib_location("vertexUV");
 
 	// Initialize uniforms' IDs
-	Text2DUniformID = glGetUniformLocation( Text2DShaderID, "myTextureSampler" );
-
+        Text2DUniformID = text2D_shader.get_uniform_location("myTextureSampler");
+        windowSizeID = text2D_shader.get_uniform_location("window_size");
 }
 
-void printText2D(const char * text, int x, int y, int size){
+void printText2D(const char * text, int x, int y, int size, int window_w, int window_h) {
 
 	unsigned int length = strlen(text);
 
 	// Fill buffers
 	std::vector<glm::vec2> vertices;
 	std::vector<glm::vec2> UVs;
+        vertices.reserve(6*length);
+        UVs.reserve(6*length);
 	for ( unsigned int i=0 ; i<length ; i++ ){
 		
 		glm::vec2 vertex_up_left    = glm::vec2( x+i*size     , y+size );
@@ -85,13 +90,17 @@ void printText2D(const char * text, int x, int y, int size){
 	glBufferData(GL_ARRAY_BUFFER, UVs.size() * sizeof(glm::vec2), &UVs[0], GL_STATIC_DRAW);
 
 	// Bind shader
-	glUseProgram(Text2DShaderID);
+//	glUseProgram(Text2DShaderID);
+        text2D_shader.use();
 
 	// Bind texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, Text2DTextureID);
 	// Set our "myTextureSampler" sampler to user Texture Unit 0
 	glUniform1i(Text2DUniformID, 0);
+
+        // Bind window size
+        glUniform2f(windowSizeID, (float)window_w, (float)window_h); 
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(vertexPosition_screenspaceID);
@@ -125,6 +134,6 @@ void cleanupText2D(){
 	// Delete texture
 	glDeleteTextures(1, &Text2DTextureID);
 
-	// Delete shader
-	glDeleteProgram(Text2DShaderID);
+//	// Delete shader
+//	glDeleteProgram(Text2DShaderID);
 }

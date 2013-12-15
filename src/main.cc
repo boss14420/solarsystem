@@ -28,6 +28,7 @@
 #include <unordered_set>
 
 
+#include "common/text2D.hpp"
 #include "config.hh"
 //#include "constants.h"
 #include "graphics/background.hh"
@@ -42,8 +43,9 @@ static double  zoom_step = 0.08;
 static double up_x = 0.0f, up_y = 1.0f;
 static double  cam_xz_angle = 0.0f, cam_y_angle = -0.45f;
 static double  cam_z_angle = M_PI_2;
-static double  day_per_second = 1.0; static std::size_t speed = 16;
+static double  seconds_per_day = 1.0; static std::size_t speed = 16;
 static bool orbits = true;
+static bool display_stat = true;
 static bool moving = true, spinning = true;
 static unsigned last_time = 0, frames = 0;
 //static SDL_Window *window = NULL;
@@ -52,10 +54,47 @@ static unsigned last_time = 0, frames = 0;
 static mat4 ProjectionMatrix;
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////// Rendering functions
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void printState() {
     std::fprintf(stderr, "xpos = %f, ypos = %f, zpos = %f\n", xpos, ypos, zpos);
     std::fprintf(stderr, "sight_z = %f, sight_y = %f, sight_z = %f\n", sight_x, sight_y, sight_z);
     std::fputc('\n', stderr);
+}
+
+void renderStat(SDL_Window *window, std::size_t frames)
+{
+    if (!display_stat)
+        return;
+
+    char message[100];
+
+    int width, height;
+    int fontsize = 15;
+    SDL_GetWindowSize(window, &width, &height);
+
+    // FPS
+    std::snprintf(message, 100, "Framerate: %lu FPS", frames);
+    printText2D(message, 10, height - fontsize, fontsize, width, height);
+
+    // Eye
+    std::snprintf(message, 100, "Eye possition: (%.2f, %.2f, %.2f)", xpos, ypos, zpos);
+    printText2D(message, 10, height - 2*fontsize, fontsize, width, height);
+
+    // Zoom step
+    std::snprintf(message, 100, "Zoom step: %.5f", zoom_step);
+    printText2D(message, 10, height - 3*fontsize, fontsize, width, height);
+
+    // Speed
+    std::snprintf(message, 100, "Speed: %lu (1 second = %.3f days)", speed, seconds_per_day);
+    printText2D(message, 10, height - 4*fontsize, fontsize, width, height);
+}
+
+void renderHelp(SDL_Window *window)
+{
+    
 }
 
 void renderScene(const SolarSystem &solarsystem, const Background &sky) {
@@ -91,8 +130,13 @@ void renderScene(const SolarSystem &solarsystem, const Background &sky) {
 void reshape(int w, int h) {
     if (!h) h = 1;
     glViewport(0, 0, (GLint) w, (GLint) h);
-    ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.0001f, 30.0f);
+    ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.0001f, 50.0f);
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////// Input handling
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void mouse(SDL_Window *window, SDL_Event const &event) {
     static Sint32 last_x = 0, last_y = 0;
@@ -174,7 +218,7 @@ void keyboard(SDL_Window *window, SDL_Scancode scancode) {
             cam_xz_angle = 0.0f, cam_y_angle = -0.45f;
             cam_z_angle = M_PI_2;
             zoom_step = 0.08;
-            speed = 16, day_per_second = 1;
+            speed = 16, seconds_per_day = 1;
             break;
         case SDL_SCANCODE_F:
             flags = SDL_GetWindowFlags(window);
@@ -182,6 +226,9 @@ void keyboard(SDL_Window *window, SDL_Scancode scancode) {
             break;
         case SDL_SCANCODE_O:
             orbits = !orbits;
+            break;
+        case SDL_SCANCODE_T:
+            display_stat = !display_stat;
             break;
         case SDL_SCANCODE_LEFT:
             cam_xz_angle -= 0.02f;
@@ -228,17 +275,17 @@ void keyboard(SDL_Window *window, SDL_Scancode scancode) {
         case SDL_SCANCODE_KP_PLUS:
             log_speed = 0, tmp_speed = speed;
             while (tmp_speed) tmp_speed >>= 1, ++log_speed;
-            if (speed < 1600) {
+//            if (speed < 1600) {
                 speed += log_speed;
-                day_per_second = speed / 16.0;
-            }
+                seconds_per_day = speed / 16.0;
+//            }
             break;
         case SDL_SCANCODE_KP_MINUS:
             log_speed = 0, tmp_speed = speed;
             while (tmp_speed) tmp_speed >>= 1, ++log_speed;
             if (speed > log_speed) {
                 speed -= log_speed;
-                day_per_second = speed / 16.0;
+                seconds_per_day = speed / 16.0;
             }
             break;
         default:
@@ -247,7 +294,14 @@ void keyboard(SDL_Window *window, SDL_Scancode scancode) {
 //    printState();
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////
+///////// main
+
 int main(int argc, char **argv) {
+    /////////////////////////////////////////
+    ///// Init SDL2
+
     SDL_Init(SDL_INIT_EVERYTHING);
 //    TTF_Init();
     std::atexit(SDL_Quit);
@@ -284,32 +338,41 @@ int main(int argc, char **argv) {
 //        return -1;
 //    }
 
+    /////////////////////////////////////////
+    ///// Init OpenGL
+
     std::fprintf(stderr, "Using OpenGL version: %s\n", glGetString(GL_VERSION));
 
     glClearColor(0.0f, 0.4f, 0.0f, 0.0f);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
 
     ///////////////////////////////////////
     // Init objects
-
     SolarSystem solarsystem;
     Background sky("textures/starmap");
 //    Text2DPrinter text_printer("Vera.ttf", 10);
 //    sky._texture = text_printer.render_text2D("hello world", 3, 4);
 
+    // Initialize little text library with the Holstein font
+    initText2D( "textures/LinuxBiolinum.png" );
+ 
+
+    ///////////////////////////////////////////////////
+    ///////  Render loop
+
     last_time = SDL_GetTicks();
     unsigned dt = 10, delta = 0;
-    unsigned last_fps_print = last_time;
+    unsigned last_fps_print = last_time, last_fps = 0;
 
     bool running = true;
-    bool print_fps = (argc >= 2 && argv[1][0] == 'f');
+//    bool print_fps = (argc >= 2 && argv[1][0] == 'f');
 //    char message[100] = "FPS = sfdkasfjhkahdsflahglashdhs";
     while (running) {
         SDL_Event event;
@@ -340,37 +403,30 @@ int main(int argc, char **argv) {
     
         unsigned time = SDL_GetTicks();
         delta += time - last_time;
-        solarsystem.physical_step(((delta/dt)*dt) * day_per_second, moving, spinning);
+        solarsystem.physical_step(((delta/dt)*dt) * seconds_per_day, moving, spinning);
         delta %= dt;
 //        while (delta >= dt) { // Maintain constant physics step and free framerate
-//            solarsystem.physical_step(dt * day_per_second, moving, spinning);
+//            solarsystem.physical_step(dt * seconds_per_day, moving, spinning);
 //            delta -= dt;
 //        }
         last_time = time;
         frames++;
         if (time - last_fps_print >= 1000) {
-            if (print_fps)
-                std::fprintf(stdout, "FPS: %f frame/s\n", (float)frames);
-//            std::snprintf(message, 100, "FPS: %f frame/s\n", (float)frames);
-//            glDeleteTextures(1, &sky._texture);
-//            sky._texture = text_printer.render_text2D(message, 0, 0);
+            last_fps = frames;
+//            std::snprintf(message, 100, "FPS: %.2f frame/s\n", (float)frames);
+//            if (print_fps)
+//                std::fputs(message, stderr);
             last_fps_print += 1000;
             frames = 0;
         }
-//        text_printer.render_text2D("A", 0, 0);
-//          drawText("sfjklsdgafjgsdjskfjkadsfla", font, 20, 20);
-//        SDL_Color color = { 255, 255, 255 };
-//        SDL_Surface *surf = TTF_RenderText_Blended(font, message, color);
-//        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
-//        SDL_RenderCopy(renderer, texture, NULL, NULL);
-//        SDL_RenderPresent(renderer);
-//
-//        SDL_FreeSurface(surf);
-//        SDL_DestroyTexture(texture);
+        renderStat(window, last_fps);
 
         SDL_GL_SwapWindow(window);
-    } 
+    }
 
+    ///////////////////////////////////////////////
+    ///// Clean up
+    cleanupText2D();
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
 
