@@ -15,7 +15,6 @@
 #include <vector>
 
 #include <cstdio>
-#define FLOG(STR, ...) std::fprintf(stderr, STR, __VA_ARGS__)
 
 class SolarSystem;
 

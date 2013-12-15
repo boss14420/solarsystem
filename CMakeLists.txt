@@ -80,7 +80,7 @@ message(STATUS ${LIBPNG_LIBRARIES})
 
 
 SET(CMAKE_CXX_FLAGS_DEBUG "-g -std=c++11 -Wall")
-SET(CMAKE_CXX_FLAGS "-O3 -march=native -Wall -std=c++11 -pipe")
+SET(CMAKE_CXX_FLAGS "-O3 -march=native -Wall -std=c++11 -pipe -DNDEBUG")
 SET(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS})
 
 add_executable(solarsystem

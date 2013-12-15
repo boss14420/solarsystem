@@ -20,13 +20,11 @@
 #include <glm/gtx/transform.hpp>
 
 #include <vector>
-#include <deque>
 #include <cstdint>
 #include <random>
+#include <cstdlib>
+#include <cstring>
 #include <algorithm>
-#include <functional>
-#include <unordered_set>
-
 
 #include "common/text2D.hpp"
 #include "config.hh"
@@ -305,17 +303,23 @@ int main(int argc, char **argv) {
     SDL_Init(SDL_INIT_EVERYTHING);
 //    TTF_Init();
     std::atexit(SDL_Quit);
+
 #ifdef USE_OPENGLES
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles2", SDL_HINT_OVERRIDE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #else
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+//    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+//    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 #endif
+    int multisampling = 4;
+    if (argc > 2 && !std::strcmp(argv[1], "-m")) {
+        multisampling = std::atoi(argv[2]);
+    }
+    if (multisampling > 0)
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, multisampling);
 
     SDL_Window *window = SDL_CreateWindow("Solar system", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 400, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (window == nullptr) {

@@ -15,11 +15,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
 
-
 #include "../common/texture.hpp"
 
 
-void drawTorus(double, int, int);
+#ifndef NDEBUG
+    #define FLOG(STR, ...) std::fprintf(stderr, STR, __VA_ARGS__)
+#else
+    #define FLOG(STR, ...)
+#endif
 
 Mesh Planet::_sphere_model;
 Circle Planet::_orbit_model;
