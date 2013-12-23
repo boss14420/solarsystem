@@ -21,13 +21,13 @@
 //#include "../constants.h"
 
 #define AU 2
-#define EARTH_RADIUS (AU * 4.2805e-6) * 2000
+#define EARTH_RADIUS (AU * 4.2805e-5) * 200
 #define MOON_ORBIT_RADIUS (AU*.00257) * 50
 #define ECLIPTIC_INCLINATION 7.2
 
     //                       Radius               A      Ecc    Year    Day      Incl   Tilt    Node    Perih.  Texture                 Phase
 const PlanetData sun_data = {
-      EARTH_RADIUS *  20,    9e-6,     0.0,        0.0,    1.0,     25.0, 0.0f,  0.0,                   0.0,   0.0,  -M_PI, "textures/sun"};
+      EARTH_RADIUS *  19,    9e-6,     0.0,        0.0,    1.0,     25.0, 0.0f,  0.0,                   0.0,   0.0,  -M_PI, "textures/sun"};
 
 const std::vector<PlanetData> planets_data = {
     { EARTH_RADIUS * 0.38,   .0,       AU * 0.39f, 0.2f,   87.9f,  58.6f,   7.0f+ECLIPTIC_INCLINATION,  0.03f,  48.33f, 29.12f, -M_PI, "textures/mercury" }, // Mercury

@@ -53,7 +53,7 @@ Planet::Planet(PlanetData const &pd)
     _orbit_model_matrix *= glm::rotate(orbit_inclination, 0.0f, 0.0f, 1.0f);
     _orbit_model_matrix *= glm::rotate(arg_periapsis, 0.0f, 1.0f, 0.0f);
 
-    orbitX = semimajor_axis * cos(-orbitPHI);
+    orbitX = semimajor_axis * cos(-orbitPHI) - eccentricity * semimajor_axis;
     orbitZ = semiminor_axis * sin(-orbitPHI);
 
     FLOG("Planet constructor, address %p, texture %u, texture file %s\n", this, _texture, pd.texture_file);

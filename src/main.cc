@@ -128,7 +128,7 @@ void renderScene(const SolarSystem &solarsystem, const Background &sky) {
 void reshape(int w, int h) {
     if (!h) h = 1;
     glViewport(0, 0, (GLint) w, (GLint) h);
-    ProjectionMatrix = glm::perspective(45.0f, (float) w/h, 0.001f, 50.0f);
+    ProjectionMatrix = glm::perspective(45.0, (double) w/h, 0.00001, 50.0);
 }
 
 
